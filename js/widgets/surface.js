@@ -5,9 +5,15 @@
 // The brush overwrites real payload bytes with garbage; healing runs the
 // real interleaved RS decoder. Nothing is faked.
 
-import { Figure, C, mono, fade, textBitmap, REDUCED } from './figure.js';
+import { Figure, C, mono, fade, textBitmap, reducedMotion } from './figure.js';
 import { shield, unshield } from '../codec.js';
 import { mulberry32 } from '../prng.js';
+
+function bytesEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
 
 export class StorageSurface extends Figure {
   constructor(mount, {
@@ -49,6 +55,7 @@ export class StorageSurface extends Figure {
     this.decodeMs = null;
     this.lastStatic = 0;
     this.lastResult = null;
+    this.miscorrected = false;
     this.onDamageChange?.();
   }
 
@@ -63,7 +70,7 @@ export class StorageSurface extends Figure {
     const gap = 26;
     const parityRows = Math.ceil(this.parityBytes / this.cols);
     const extra = this.extraCanvasH?.() ?? 0;
-    const cs = Math.max(2, Math.min(
+    const cs = Math.max(0.75, Math.min(
       (w - pad * 2) / this.cols,
       (h - pad * 2 - gap - labelH * 2 - extra) / (this.rows + parityRows),
     ));
@@ -105,7 +112,8 @@ export class StorageSurface extends Figure {
       }
     }
     if (changed) {
-      this.failedBlocks.clear();
+      // failedBlocks is NOT cleared here: wreckage from a failed heal stays
+      // on the books until reset — the meter may not launder lost data
       this.lastResult = null;
       this.onDamageChange?.();
     }
@@ -129,19 +137,17 @@ export class StorageSurface extends Figure {
     this.lastResult = res;
 
     this.failedBlocks = new Set(res.perBlock.map((b, i) => (b.ok ? -1 : i)).filter((i) => i >= 0));
-    const healed = res.ok ? this.clean : this.#partial();
+
+    // The displayed bytes come from the DECODER's output, re-encoded — never
+    // from the kept original. The original exists only to catch the decoder
+    // lying (a beyond-budget miscorrection onto a different valid codeword)
+    // and to serve the reset button.
+    const healed = shield(res.data, { nsym: this.nsym }).payload;
+    this.miscorrected = res.ok && !bytesEqual(healed, this.clean);
 
     const L = this.layout(this.w, this.h);
     const order = [...this.erased].sort((a, b) => this.#byteX(a, L) - this.#byteX(b, L));
     this.healing = { start: this.t, order, healed, ok: res.ok, done: 0, doneSet: new Set() };
-  }
-
-  #partial() {
-    const out = Uint8Array.from(this.stored);
-    for (let p = 0; p < out.length; p++) {
-      if (!this.failedBlocks.has(p % this.meta.blockCount)) out[p] = this.clean[p];
-    }
-    return out;
   }
 
   #byteX(p, L) {
@@ -157,6 +163,7 @@ export class StorageSurface extends Figure {
     this.healing = null;
     this.decodeMs = null;
     this.lastResult = null;
+    this.miscorrected = false;
     this.onDamageChange?.();
   }
 
@@ -182,7 +189,7 @@ export class StorageSurface extends Figure {
       this.autoHealAt = null;
       this.heal();
     }
-    if (!REDUCED && this.t - this.lastStatic > 0.12) {
+    if (!reducedMotion() && this.t - this.lastStatic > 0.12) {
       this.lastStatic = this.t;
       for (const p of this.erased) {
         if (!this.healing?.doneSet.has(p)) this.stored[p] = Math.floor(this.rng() * 256);
@@ -190,25 +197,23 @@ export class StorageSurface extends Figure {
     }
     if (this.healing) {
       const hz = this.healing;
-      const T = REDUCED ? 0 : 0.9;
+      const T = reducedMotion() ? 0 : 0.9;
       const frac = T === 0 ? 1 : Math.min(1, (this.t - hz.start) / T);
       const target = Math.floor(frac * hz.order.length);
-      while (hz.done < target) {
-        const p = hz.order[hz.done++];
-        this.stored[p] = hz.healed[p];
+      const advance = (p) => {
         hz.doneSet.add(p);
-        if (!this.failedBlocks.has(p % this.meta.blockCount)) this.flash.set(p, this.t);
+        // bytes in failed blocks stay damaged AND stay tracked — the meters
+        // must keep telling the truth about wreckage
+        if (this.failedBlocks.has(p % this.meta.blockCount)) return;
+        this.stored[p] = hz.healed[p];
+        this.flash.set(p, this.t);
         this.erased.delete(p);
-      }
+      };
+      while (hz.done < target) advance(hz.order[hz.done++]);
       if (frac >= 1) {
-        // flush any remainder (guards against float edge at frac→1)
-        while (hz.done < hz.order.length) {
-          const p = hz.order[hz.done++];
-          this.stored[p] = hz.healed[p];
-          this.erased.delete(p);
-        }
+        while (hz.done < hz.order.length) advance(hz.order[hz.done++]);
         this.healing = null;
-        this.onHealed?.(hz.ok, hz.order.length);
+        this.onHealed?.(hz.ok, hz.order.length, this.miscorrected);
       }
     }
     for (const [p, t0] of this.flash) if (this.t - t0 > 0.6) this.flash.delete(p);
@@ -239,7 +244,8 @@ export class StorageSurface extends Figure {
           ctx.fillStyle = bit ? fade(C.rust, 0.85) : fade(C.rust, 0.16);
           ctx.fillRect(x, y, cs - 0.5, cs - 0.5);
         } else {
-          const wrecked = this.failedBlocks.has(p % this.meta.blockCount) && this.stored[p] !== this.clean[p];
+          const wrecked = (this.failedBlocks.has(p % this.meta.blockCount) || this.miscorrected)
+            && this.stored[p] !== this.clean[p];
           if (bit) {
             ctx.fillStyle = wrecked ? fade(C.rust, 0.6) : C.bright;
             ctx.fillRect(x, y, cs - 0.5, cs - 0.5);
@@ -274,7 +280,7 @@ export class StorageSurface extends Figure {
     this.drawExtra?.(ctx, w, h, L);
 
     if (!this.touched) {
-      const pulse = REDUCED ? 0.75 : 0.55 + 0.3 * Math.sin(this.t * 2.2);
+      const pulse = reducedMotion() ? 0.75 : 0.55 + 0.3 * Math.sin(this.t * 2.2);
       ctx.font = mono(11);
       ctx.textAlign = 'right';
       ctx.fillStyle = fade(C.gold, pulse);

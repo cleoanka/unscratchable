@@ -12,7 +12,7 @@ export const C = {
   text: '#e8e2d3',
   bright: '#fdf8ea',
   dim: '#9b9483',
-  faint: '#5f594a',
+  faint: '#847d69', // quiet, but still ≥4.5:1 on the ink background
   rust: '#e0533d',
   heal: '#3ddc84',
   gold: '#c8a24b',
@@ -24,17 +24,25 @@ export const SERIF = "'Iowan Old Style', 'Palatino Linotype', Palatino, Charter,
 
 export function mono(px) { return `${px}px ${MONO}`; }
 
-export const REDUCED = typeof matchMedia !== 'undefined'
-  && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const motionQuery = typeof matchMedia !== 'undefined'
+  ? matchMedia('(prefers-reduced-motion: reduce)')
+  : null;
+// live query — respects the OS setting changing mid-session
+export function reducedMotion() {
+  return motionQuery ? motionQuery.matches : false;
+}
 
 export class Figure {
-  constructor(mount, { aspect = 0.6, minH = 220, maxH = 560 } = {}) {
+  // touch: 'drag' figures own the gesture (touch-action none);
+  //        'tap' figures let vertical pans scroll the page
+  constructor(mount, { aspect = 0.6, minH = 220, maxH = 560, touch = 'drag' } = {}) {
     this.mount = mount;
     this.aspect = aspect;
     this.minH = minH;
     this.maxH = maxH;
 
     this.canvas = document.createElement('canvas');
+    this.canvas.style.touchAction = touch === 'tap' ? 'pan-y' : 'none';
     this.ctx = this.canvas.getContext('2d');
     mount.appendChild(this.canvas);
 
@@ -43,8 +51,12 @@ export class Figure {
     this.t = 0;
     this.hover = null;
     this.down = false;
+    this.#pointerId = null;
 
     this.canvas.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return; // left button only
+      if (this.#pointerId !== null) return; // one finger owns the gesture
+      this.#pointerId = e.pointerId;
       this.canvas.setPointerCapture(e.pointerId);
       this.down = true;
       const p = this.#xy(e);
@@ -53,25 +65,30 @@ export class Figure {
       e.preventDefault();
     });
     this.canvas.addEventListener('pointermove', (e) => {
+      if (this.#pointerId !== null && e.pointerId !== this.#pointerId) return;
       const p = this.#xy(e);
       this.hover = p;
       this.onMove?.(p.x, p.y, e);
     });
     const up = (e) => {
-      if (!this.down) return;
+      if (!this.down || e.pointerId !== this.#pointerId) return;
       this.down = false;
+      this.#pointerId = null;
       const p = this.#xy(e);
       this.onUp?.(p.x, p.y, e);
     };
     this.canvas.addEventListener('pointerup', up);
     this.canvas.addEventListener('pointercancel', up);
+    this.canvas.addEventListener('lostpointercapture', () => {
+      this.down = false;
+      this.#pointerId = null;
+    });
     this.canvas.addEventListener('pointerleave', () => {
       this.hover = null;
       this.onLeave?.();
     });
 
     this.visible = false;
-    this.#raf = null;
     this.#last = 0;
     new IntersectionObserver((entries) => {
       for (const en of entries) {
@@ -104,7 +121,9 @@ export class Figure {
     this.onResize?.(w, h);
   }
 
-  #raf; #last;
+  #pointerId = null;
+  #raf = null;
+  #last;
   #start() {
     if (this.#raf != null) return;
     this.#last = performance.now();
@@ -183,6 +202,7 @@ export function segmented(bar, { options, value, onChange, label }) {
   const seg = document.createElement('div');
   seg.className = 'seg';
   seg.setAttribute('role', 'group');
+  if (label) seg.setAttribute('aria-label', label);
   const buttons = options.map((opt) => {
     const b = document.createElement('button');
     b.type = 'button';
@@ -205,10 +225,12 @@ export function segmented(bar, { options, value, onChange, label }) {
   return seg;
 }
 
-export function note(bar, initial = '') {
+// live: announce changes to screen readers — reserve for user-triggered
+// results, never for timer-driven or per-pointermove churn
+export function note(bar, initial = '', { live = false } = {}) {
   const n = document.createElement('span');
   n.className = 'fig-note';
-  n.setAttribute('aria-live', 'polite');
+  if (live) n.setAttribute('aria-live', 'polite');
   n.textContent = initial;
   bar.appendChild(n);
   return {

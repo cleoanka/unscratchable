@@ -74,12 +74,14 @@ export class Finale extends StorageSurface {
     );
   }
 
-  onHealed(ok, n) {
-    if (ok) {
+  onHealed(ok, n, miscorrected) {
+    if (miscorrected) {
+      this.meter.set('the decoder converged on a DIFFERENT valid codeword — silent miscorruption; this is what beyond-budget damage can do', 'rust');
+    } else if (ok) {
       const how = this.knownDamage ? 'erasure decoding' : 'error hunting (Berlekamp–Massey found every location)';
       this.meter.set(`healed ${n} bytes by ${how} in ${this.decodeMs.toFixed(1)} ms`, 'heal');
     } else {
-      this.meter.set(`${this.failedBlocks.size} of ${this.meta.blockCount} blocks lost — past ${this.knownDamage ? 'the erasure budget' : 'the half-budget for unknown damage'} · reset to try again`, 'rust');
+      this.meter.set(`${this.failedBlocks.size} of ${this.meta.blockCount} blocks lost — past ${this.knownDamage ? 'the erasure budget' : 'the half-budget for unknown damage'} · reset to start over`, 'rust');
     }
   }
 

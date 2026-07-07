@@ -72,9 +72,29 @@ export class Polynomial extends Figure {
   #report() {
     const alive = this.#survivors().length;
     if (alive >= K) {
+      this.fan = null;
       this.info.set(`7 sent · ${this.dead.size} destroyed · ${alive} remain ≥ 3 — the curve is fully recovered`, this.dead.size ? 'heal' : '');
     } else {
+      this.#rollFan();
       this.info.set(`only ${alive} point${alive === 1 ? '' : 's'} left — infinitely many parabolas fit · the message is gone`, 'rust');
+    }
+  }
+
+  // precompute the ambiguity fan ONCE per state change — re-rolling it every
+  // frame would strobe (and defeat prefers-reduced-motion)
+  #rollFan() {
+    const survivors = this.#survivors().map((x) => [x, this.#curve(x)]);
+    this.fan = [];
+    for (let t = 0; t < 24; t++) {
+      const fake = [...survivors];
+      let guard = 0;
+      while (fake.length < 3 && guard++ < 60) {
+        const fx = this.rng() * 8;
+        if (fake.every(([sx]) => Math.abs(sx - fx) > 0.2)) {
+          fake.push([fx, this.rng() * 11 - 1.5]);
+        }
+      }
+      if (fake.length === 3) this.fan.push(fake);
     }
   }
 
@@ -117,6 +137,7 @@ export class Polynomial extends Figure {
     if (this.dragIdx >= 0 && this.moved) {
       const M = this.#map(this.w, this.h);
       this.msgY[this.dragIdx] = Math.max(-1.5, Math.min(9.5, Math.round(M.Yinv(y) * 2) / 2));
+      if (this.fan) this.#rollFan(); // survivors moved — the maybes move too
     }
   }
 
@@ -162,13 +183,9 @@ export class Polynomial extends Figure {
       ctx.stroke();
       ctx.lineWidth = 1;
     } else {
-      // ambiguity fan: many parabolas through the survivors
-      const survivors = alive.map((x) => [x, this.#curve(x)]);
-      for (let t = 0; t < 24; t++) {
-        const fake = [...survivors];
-        while (fake.length < 3) {
-          fake.push([this.rng() * 8, this.rng() * 11 - 1.5]);
-        }
+      // ambiguity fan: many parabolas through the survivors (precomputed)
+      if (!this.fan) this.#rollFan();
+      for (const fake of this.fan) {
         ctx.beginPath();
         for (let px = 0; px <= 8; px += 0.12) {
           const py = this.#fit(px, fake);
@@ -214,6 +231,11 @@ export class Polynomial extends Figure {
     ctx.font = mono(10);
     ctx.textAlign = 'left';
     ctx.fillStyle = C.faint;
-    ctx.fillText('● GOLD = THE MESSAGE (DRAG UP/DOWN) · ○ WHITE = SPARES · CLICK ANY POINT TO DESTROY / REVIVE', M.x0, 16);
+    if (w < 660) {
+      ctx.fillText('● GOLD = THE MESSAGE (DRAG UP/DOWN) · ○ WHITE = SPARES', M.x0, 16);
+      ctx.fillText('CLICK ANY POINT TO DESTROY / REVIVE', M.x0, 30);
+    } else {
+      ctx.fillText('● GOLD = THE MESSAGE (DRAG UP/DOWN) · ○ WHITE = SPARES · CLICK ANY POINT TO DESTROY / REVIVE', M.x0, 16);
+    }
   }
 }

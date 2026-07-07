@@ -43,11 +43,13 @@ export class Hero extends StorageSurface {
     this.meter.set(over ? `${msg} — beyond repair` : `${msg} — still healable`, over ? 'rust' : 'heal');
   }
 
-  onHealed(ok, n) {
-    if (ok) {
-      this.meter.set(`healed ${n} bytes across ${this.meta.blockCount} blocks in ${this.decodeMs.toFixed(1)} ms`, 'heal');
+  onHealed(ok, n, miscorrected) {
+    if (miscorrected) {
+      this.meter.set('the decoder converged on a DIFFERENT valid codeword — silent miscorruption; damage was beyond the guarantee', 'rust');
+    } else if (ok) {
+      this.meter.set(`healed ${this.erased.size === 0 ? n : n - this.erased.size} bytes across ${this.meta.blockCount} blocks in ${this.decodeMs.toFixed(1)} ms`, 'heal');
     } else {
-      this.meter.set(`${this.failedBlocks.size} of ${this.meta.blockCount} blocks over their ${this.budget()}-byte budget — data lost · reset to try again`, 'rust');
+      this.meter.set(`${this.failedBlocks.size} of ${this.meta.blockCount} blocks over their ${this.budget()}-byte budget — their bytes are gone · reset to start over`, 'rust');
     }
   }
 

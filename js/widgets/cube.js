@@ -3,7 +3,7 @@
 // within distance 1 of exactly one codeword: two decoding spheres tile the
 // whole space. Drag to rotate; click a corner to watch it decode.
 
-import { Figure, C, mono, fade, uiBar, button, note, spacer, REDUCED } from './figure.js';
+import { Figure, C, mono, fade, uiBar, button, note, spacer, reducedMotion } from './figure.js';
 
 const CODEWORDS = [0b000, 0b111];
 
@@ -17,8 +17,23 @@ export class Cube extends Figure {
     this.dragging = false;
     this.idle = 0;
 
+    // keyboard path: arrows rotate, Enter cycles through the corners
+    this.canvas.tabIndex = 0;
+    this.canvas.setAttribute('aria-label', 'cube of 3-bit strings — arrow keys rotate, Enter steps through corners');
+    this.canvas.addEventListener('keydown', (e) => {
+      const step = 0.15;
+      if (e.key === 'ArrowLeft') this.yaw -= step;
+      else if (e.key === 'ArrowRight') this.yaw += step;
+      else if (e.key === 'ArrowUp') this.pitch = Math.max(-1.2, this.pitch - step);
+      else if (e.key === 'ArrowDown') this.pitch = Math.min(1.2, this.pitch + step);
+      else if (e.key === 'Enter') this.selectCorner(((this.selected ?? -1) + 1) % 8);
+      else return;
+      this.idle = 0;
+      e.preventDefault();
+    });
+
     const bar = uiBar(mount);
-    this.info = note(bar, 'click any corner to decode it');
+    this.info = note(bar, 'click any corner to decode it', { live: true });
     spacer(bar);
     this.sphereBtn = button(bar, 'show decoding spheres', () => {
       this.spheres = !this.spheres;
@@ -55,21 +70,27 @@ export class Cube extends Figure {
     return CODEWORDS.reduce((best, c) => (Cube.dist(v, c) < Cube.dist(v, best) ? c : best));
   }
 
+  selectCorner(v) {
+    this.selected = v;
+    if (v === null) {
+      this.info.set('click any corner to decode it');
+      return;
+    }
+    const c = this.nearest(v);
+    const d = Cube.dist(v, c);
+    this.info.set(
+      d === 0
+        ? `${bits(v)} is a codeword — it decodes as itself`
+        : `d(${bits(v)}, ${bits(c)}) = ${d} → decodes to ${bits(c)}`,
+      d === 0 ? 'heal' : '',
+    );
+  }
+
   onDown(x, y) {
     const pts = this.#project(this.w, this.h);
     for (let v = 0; v < 8; v++) {
       if ((pts[v].x - x) ** 2 + (pts[v].y - y) ** 2 < 17 ** 2) {
-        this.selected = this.selected === v ? null : v;
-        if (this.selected !== null) {
-          const c = this.nearest(v);
-          const d = Cube.dist(v, c);
-          this.info.set(
-            d === 0
-              ? `${bits(v)} is a codeword — it decodes as itself`
-              : `d(${bits(v)}, ${bits(c)}) = ${d} → decodes to ${bits(c)}`,
-            d === 0 ? 'heal' : '',
-          );
-        } else this.info.set('click any corner to decode it');
+        this.selectCorner(this.selected === v ? null : v);
         return;
       }
     }
@@ -90,7 +111,7 @@ export class Cube extends Figure {
 
   update(dt) {
     this.idle += dt;
-    if (!REDUCED && !this.down && this.idle > 2.5) this.yaw += dt * 0.12;
+    if (!reducedMotion() && !this.down && this.idle > 2.5) this.yaw += dt * 0.12;
   }
 
   draw(ctx, w, h) {
@@ -176,7 +197,7 @@ export class Cube extends Figure {
         ctx.stroke();
       }
       if (this.selected === v) {
-        const pulse = REDUCED ? 6 : 5 + 2 * Math.sin(this.t * 5);
+        const pulse = reducedMotion() ? 6 : 5 + 2 * Math.sin(this.t * 5);
         ctx.beginPath();
         ctx.arc(p.x, p.y, r + pulse, 0, Math.PI * 2);
         ctx.strokeStyle = fade(C.gold, 0.8);

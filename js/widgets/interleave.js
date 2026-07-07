@@ -18,6 +18,18 @@ export class Interleave extends Figure {
     this.burstLen = 9;
     this.dragging = false;
 
+    // keyboard path for the primary interaction: arrows slide the scratch
+    this.canvas.tabIndex = 0;
+    this.canvas.setAttribute('aria-label', 'scratch position — arrow keys slide the burst across both layouts');
+    this.canvas.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') this.burstStart -= 2;
+      else if (e.key === 'ArrowRight') this.burstStart += 2;
+      else return;
+      this.#clamp();
+      this.#judge();
+      e.preventDefault();
+    });
+
     const bar = uiBar(mount);
     this.verdict = note(bar, '');
     spacer(bar);
@@ -128,20 +140,25 @@ export class Interleave extends Figure {
     strip(L.y1, 'SEQUENTIAL — BLOCK AFTER BLOCK', (i) => Math.floor(i / N), (i) => i % N >= K, seq);
     strip(L.y2, 'INTERLEAVED — COLUMN BY COLUMN', (i) => i % B, (i) => Math.floor(i / B) >= K, il);
 
-    // tallies under each strip
+    // tallies under each strip — wrap onto extra rows at narrow widths
     const tally = (y, loads) => {
       ctx.font = mono(11);
       ctx.textAlign = 'left';
       let tx = L.x0;
+      let ty = y;
       for (let b = 0; b < B; b++) {
         const over = loads[b] > NSYM;
-        ctx.fillStyle = over ? C.rust : loads[b] > 0 ? C.heal : C.faint;
         const s = `■ blk${b} ${loads[b]}/${NSYM}${over ? ' ✕' : loads[b] > 0 ? ' ✓' : ''}`;
+        const sw = ctx.measureText(s).width + 26;
+        if (tx > L.x0 && tx + sw > w - 12) {
+          tx = L.x0;
+          ty += 15;
+        }
         ctx.fillStyle = fade(C.blocks[b], 0.9);
-        ctx.fillText('■', tx, y);
+        ctx.fillText('■', tx, ty);
         ctx.fillStyle = over ? C.rust : loads[b] > 0 ? C.heal : C.faint;
-        ctx.fillText(s.slice(2), tx + 14, y);
-        tx += ctx.measureText(s).width + 26;
+        ctx.fillText(s.slice(2), tx + 14, ty);
+        tx += sw;
       }
     };
     tally(L.y1 + L.cs * 1.7 + 20, seq);

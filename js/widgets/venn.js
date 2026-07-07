@@ -3,7 +3,7 @@
 // and when a bit flips, the pattern of broken circles spells out — in
 // binary — the exact position of the culprit.
 
-import { Figure, C, mono, fade, uiBar, button, note, spacer, REDUCED } from './figure.js';
+import { Figure, C, mono, fade, uiBar, button, note, spacer, reducedMotion } from './figure.js';
 import { encode, decode } from '../hamming.js';
 import { mulberry32 } from '../prng.js';
 
@@ -12,12 +12,12 @@ const NAMES = { 1: 'p₁', 2: 'p₂', 3: 'd₁', 4: 'p₄', 5: 'd₂', 6: 'd₃'
 
 export class Venn extends Figure {
   constructor(mount) {
-    super(mount, { aspect: 0.58, minH: 340, maxH: 460 });
+    super(mount, { aspect: 0.58, minH: 380, maxH: 460, touch: 'tap' });
     this.rng = mulberry32(0xbadb17);
     this.newMessage(0b1011);
 
     const bar = uiBar(mount);
-    this.info = note(bar, 'click any bit to flip it in transit');
+    this.info = note(bar, 'click any bit to flip it in transit', { live: true });
     spacer(bar);
     button(bar, 'new message', () => this.newMessage());
     button(bar, 'flip random bit', () => {
@@ -52,8 +52,9 @@ export class Venn extends Figure {
 
   // ---------- geometry ----------
   #geom(w, h) {
-    const G = { x: w * 0.40, y: h * 0.52 };
-    const R = Math.min(w * 0.30, h * 0.31);
+    const narrow = w < 560; // phones: circles centered, readout moves below
+    const G = narrow ? { x: w * 0.5, y: h * 0.42 } : { x: w * 0.40, y: h * 0.52 };
+    const R = narrow ? Math.min(w * 0.33, h * 0.25) : Math.min(w * 0.30, h * 0.31);
     const off = R * 0.52;
     const centers = {
       1: { x: G.x + off * Math.cos(-2.44), y: G.y + off * Math.sin(-2.44) }, // p1 up-left
@@ -74,7 +75,7 @@ export class Venn extends Figure {
       labelPos[p] = { x: mx + (mx - centers[other].x) * 0.34, y: my + (my - centers[other].y) * 0.34 };
     }
     labelPos[7] = { x: G.x, y: G.y };
-    return { G, R, centers, labelPos };
+    return { G, R, centers, labelPos, narrow };
   }
 
   #violations() {
@@ -110,7 +111,7 @@ export class Venn extends Figure {
   draw(ctx, w, h) {
     ctx.fillStyle = C.ink;
     ctx.fillRect(0, 0, w, h);
-    const { G, R, centers, labelPos } = this.#geom(w, h);
+    const { G, R, centers, labelPos, narrow } = this.#geom(w, h);
     const viol = this.#violations();
     const { syndrome, nibble: decoded } = decode(this.word);
 
@@ -158,7 +159,7 @@ export class Venn extends Figure {
 
       // culprit pulse
       if (syndrome === p) {
-        const r = REDUCED ? 24 : 22 + 3 * Math.sin(this.t * 5);
+        const r = reducedMotion() ? 24 : 22 + 3 * Math.sin(this.t * 5);
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
         ctx.strokeStyle = fade(C.gold, 0.85);
@@ -168,7 +169,26 @@ export class Venn extends Figure {
       }
     }
 
-    // syndrome panel
+    // syndrome readout — side panel on wide canvases, compact strip below
+    // the circles on phones (so nothing clips off-canvas)
+    const sBits = `${(syndrome >> 2) & 1} ${(syndrome >> 1) & 1} ${syndrome & 1}`;
+    const sentStr = DATA_POS.map((p) => this.sent[p - 1]).join('');
+    const decStr = decoded.toString(2).padStart(4, '0');
+
+    if (narrow) {
+      const py = h - 44;
+      ctx.textAlign = 'left';
+      ctx.font = mono(11);
+      ctx.fillStyle = syndrome === 0 ? C.heal : C.gold;
+      ctx.fillText(
+        `SYNDROME p₄p₂p₁ = ${sBits.replaceAll(' ', '')}  ${syndrome === 0 ? '· all clear' : `= ${syndrome} → position ${syndrome}`}`,
+        14, py,
+      );
+      ctx.fillStyle = decStr === sentStr ? C.heal : C.rust;
+      ctx.fillText(`sent ${sentStr} · reads ${decStr} ${decStr === sentStr ? '✓' : '✗'}`, 14, py + 18);
+      return;
+    }
+
     const px = w * 0.78;
     let py = h * 0.2;
     ctx.textAlign = 'left';
@@ -189,17 +209,13 @@ export class Venn extends Figure {
     py += 24;
     ctx.font = `600 22px ui-monospace, Menlo, monospace`;
     ctx.fillStyle = syndrome === 0 ? C.heal : C.gold;
-    const sBits = `${(syndrome >> 2) & 1} ${(syndrome >> 1) & 1} ${syndrome & 1}`;
     ctx.fillText(sBits, px, py);
     py += 22;
     ctx.font = mono(12);
     ctx.fillStyle = syndrome === 0 ? C.heal : C.gold;
     ctx.fillText(syndrome === 0 ? '= 0 · all clear' : `= ${syndrome} · position ${syndrome}`, px, py);
 
-    // sent/decoded readout
     py = h - 40;
-    const sentStr = DATA_POS.map((p) => this.sent[p - 1]).join('');
-    const decStr = decoded.toString(2).padStart(4, '0');
     ctx.font = mono(12);
     ctx.fillStyle = C.faint;
     ctx.fillText(`sent  d₁d₂d₃d₄ = ${sentStr}`, px, py);

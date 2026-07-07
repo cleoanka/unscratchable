@@ -2,14 +2,14 @@
 // channel; every bit survives only with probability 1−p. Click any bit to
 // flip it yourself, or let the channel keep rolling.
 
-import { Figure, C, mono, fade, uiBar, slider, button, note, spacer, REDUCED } from './figure.js';
+import { Figure, C, mono, fade, uiBar, slider, button, note, spacer, reducedMotion } from './figure.js';
 import { mulberry32 } from '../prng.js';
 
 const WORD = 'HELLO';
 
 export class Channel extends Figure {
   constructor(mount) {
-    super(mount, { aspect: 0.42, minH: 260, maxH: 330 });
+    super(mount, { aspect: 0.42, minH: 260, maxH: 330, touch: 'tap' });
     this.bytes = [...WORD].map((c) => c.charCodeAt(0));
     this.nBits = this.bytes.length * 8;
     this.flips = new Array(this.nBits).fill(false);
@@ -62,7 +62,7 @@ export class Channel extends Figure {
     const L = this.#layout(this.w, this.h);
     const col = Math.floor((x - L.x0) / L.cw);
     if (col < 0 || col >= this.bytes.length) return;
-    const row = Math.round((y - L.bitsTop - L.bitsGap / 2) / L.bitsGap - 0.5);
+    const row = Math.floor((y - L.bitsTop) / L.bitsGap);
     if (row < 0 || row > 7) return;
     const i = col * 8 + row;
     this.flips[i] = !this.flips[i];
@@ -71,7 +71,7 @@ export class Channel extends Figure {
   }
 
   update() {
-    if (!REDUCED && this.t - this.lastRoll > 3.2) {
+    if (!reducedMotion() && this.t - this.lastRoll > 3.2) {
       this.lastRoll = this.t;
       this.roll();
     }

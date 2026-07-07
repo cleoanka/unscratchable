@@ -11,7 +11,10 @@
 <meta property="og:url" content="https://cleoanka.github.io/unscratchable/">
 <meta property="og:image" content="https://cleoanka.github.io/unscratchable/assets/social.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23100f0d'/%3E%3Cpath d='M6 24 L24 7' stroke='%23e0533d' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M8 26 L26 9' stroke='%233ddc84' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://cleoanka.github.io/unscratchable/">
+<link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23100f0d'/%3E%3Cpath d='M6 24 L24 7' stroke='%23e0533d' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M8 26 L26 9' stroke='%233ddc84' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="css/essay.css">
 </head>
 <body>
@@ -22,6 +25,7 @@
   <h1>unscratchable</h1>
   <p class="subtitle">Scratch this message. It heals. This is the mathematics that lets data survive our world.</p>
   <p class="byline">CANVAS &amp; CODE, NO DEPENDENCIES · <a href="https://github.com/cleoanka/unscratchable">SOURCE ON GITHUB</a></p>
+  <noscript><p class="fig-note">The figures need JavaScript — the essay is interactive all the way down. The text below still reads fine.</p></noscript>
   <hr class="rule">
 </header>
 
@@ -37,7 +41,7 @@
         <figcaption><span class="fig-no">FIG. 0</span> — The canvas is a literal view of storage: every cell is drawn from stored bytes, the brush overwrites real bytes with garbage, and healing runs a real Reed–Solomon decoder in your browser. Nothing here is faked. Push it too far — the armor is finite, and the failure is as honest as the healing.</figcaption>
       </figure>
 
-      <p>No hidden copy was kept. The bytes you destroyed were <em>gone</em>, and the survivors held enough structure to name every missing byte and compute every one of their values back into existence. That golden strip at the bottom is not a backup — it is something far stranger, and by the end of this essay you will know exactly how it works.</p>
+      <p>The decoder was shown nothing but the survivors. The bytes you destroyed were <em>gone</em>, and what remained held enough structure to name every missing byte and compute every one of their values back into existence. That golden strip at the bottom is not a backup — it is something far stranger, and by the end of this essay you will know exactly how it works. <span class="aside" style="display:inline">(The page does keep the original in memory — but only to catch the decoder ever lying, and to serve the reset button. It is never consulted to heal.)</span></p>
       <p class="aside">One honest disclosure up front: the surface tells the decoder <em>where</em> it was scratched — the way a CD player knows which frames came back illegible. Damage with known addresses is called an <em>erasure</em>. Silent corruption, where the decoder must find the damage first, costs exactly twice as much to fix. Chapter 7 lets you feel that factor of two.</p>
     </section>
 
@@ -59,10 +63,10 @@
 
       <figure class="fig" aria-label="Interactive: repetition code with majority vote; choose 1, 3 or 5 copies and set the noise" data-figure="repetition">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 2</span> — Each column is one bit, sent R times. The vote sits below. Click copies to flip them by hand — two hits on the same bit and the majority lies to you.</figcaption>
+        <figcaption><span class="fig-no">FIG. 2</span> — Each column is one bit, sent R times. The vote sits below. Click copies to flip them by hand — at three copies, two hits on the same triple and the majority lies to you.</figcaption>
       </figure>
 
-      <p>Problem one is the price: tripling every bit buys you a disk that is one-third useful. Problem two is subtler and worse: repetition spends its redundancy stupidly. It protects each bit in isolation, learning nothing from the other bits, so two unlucky hits on the same triple still get through. Sixty years of coding theory is, at heart, one question: <strong>can redundancy be spent on the message as a whole, instead of on each bit alone?</strong></p>
+      <p>Problem one is the price: tripling every bit buys you a disk that is one-third useful. Problem two is subtler and worse: repetition spends its redundancy stupidly. It protects each bit in isolation, learning nothing from the other bits, so two unlucky hits on the same triple still get through. Three-quarters of a century of coding theory is, at heart, one question: <strong>can redundancy be spent on the message as a whole, instead of on each bit alone?</strong></p>
     </section>
 
     <section class="chapter" id="ch3">
@@ -86,8 +90,8 @@
         <figcaption><span class="fig-no">FIG. 4</span> — Hamming(7,4). Click any bit — data or parity — to flip it in transit. The broken circles intersect at exactly one region: the culprit. Flip two and watch the code confidently accuse the wrong bit; every code has a budget, and honesty about the budget is part of the design.</figcaption>
       </figure>
 
-      <p>Flip any single bit and the three parity checks do not merely complain — they <em>testify</em>. Read the broken checks as a binary number and it spells out the position of the flipped bit: the error is made to confess its own address. Note what happened to the price, too: repetition needed 300% overhead to fix one error; Hamming does it for 75%. And this is another perfect code — sixteen codewords whose distance-1 spheres tile all 128 corners of the 7-cube exactly.</p>
-      <p class="aside">The syndrome trick is not a coincidence of small numbers. Hamming placed the parity bits at positions 1, 2, 4 — the powers of two — so that “which checks broke” and “binary address of the error” become the same thing. It is one of the most elegant address-buses ever built, and it is made of nothing.</p>
+      <p>Flip any single bit and the three parity checks do not merely complain — they <em>testify</em>. Read the broken checks as a binary number and it spells out the position of the flipped bit: the error is made to confess its own address. Note what happened to the price, too: repetition needed 200% overhead to fix one error; Hamming does it for 75%. And this is another perfect code — sixteen codewords whose radius-1 spheres tile all 128 corners of the 7-cube exactly.</p>
+      <p class="aside">The syndrome trick is not a coincidence of small numbers. Hamming placed the parity bits at positions 1, 2, 4 — the powers of two — so that “which checks broke” and “binary address of the error” become the same thing. It is one of the most elegant address buses ever built, and it is made of nothing.</p>
     </section>
 
     <section class="chapter" id="ch5">
@@ -99,7 +103,7 @@
         <figcaption><span class="fig-no">FIG. 5</span> — The same four codewords, written two ways, wounded by the same scratch. Drag it; widen it. Interleaving turns one fatal wound into four survivable ones.</figcaption>
       </figure>
 
-      <p>Interleaving is why a CD shrugs off a 2.4-millimeter gouge: its data is braided so that neighboring bytes on the disc belong to distant codewords. The scratch is not prevented. It is <em>diluted</em> — converted from the error pattern codes fear most into the one they handle best. The hero at the top of this page is braided the same way, which is why your wildest scribble was spread thin across many blocks.</p>
+      <p>Interleaving is why a CD shrugs off a 2.5-millimeter gouge: its data is braided so that neighboring bytes on the disc belong to distant codewords. The scratch is not prevented. It is <em>diluted</em> — converted from the error pattern codes fear most into the one they handle best. The hero at the top of this page is braided the same way, which is why your wildest scribble was spread thin across many blocks.</p>
     </section>
 
     <section class="chapter" id="ch6">
@@ -108,10 +112,10 @@
 
       <figure class="fig" aria-label="Interactive: three draggable message points define a parabola sampled at seven places; destroy points and recover the curve" data-figure="polynomial">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 6</span> — The three gold points are the message. Sampling the parabola at seven places mails four spares along for free. Destroy any four points — <em>any</em> four — and the survivors rebuild the curve exactly. Destroy a fifth and it dissolves into maybes.</figcaption>
+        <figcaption><span class="fig-no">FIG. 6</span> — The three gold points are the message (three distinct x’s, of course). Sampling the parabola at seven places mails four spares along for free. Destroy any four points — <em>any</em> four — and the survivors rebuild the curve exactly. Destroy a fifth and it dissolves into maybes.</figcaption>
       </figure>
 
-      <p>That is the entire idea of Reed–Solomon codes, published by Irving Reed and Gustave Solomon in 1960 on five quiet pages. Treat your k message bytes as the coefficients of a polynomial. Evaluate it at n&nbsp;&gt;&nbsp;k points and send those. Any k survivors pin the polynomial back down; the other n&nbsp;−&nbsp;k are pure, interchangeable spares. There is one catch — drawing curves through bytes requires an arithmetic where bytes divide cleanly, no rounding, no infinities. Such an arithmetic exists: the finite field GF(256), where addition is XOR and every one of the 255 nonzero bytes has an exact reciprocal. The line under the figure is not an analogy — those are real bytes, computed by the same decoder that healed the hero.</p>
+      <p>That is the entire idea of Reed–Solomon codes, published by Irving Reed and Gustave Solomon in 1960 on five quiet pages. Treat your k message bytes as the coefficients of a polynomial. Evaluate it at n&nbsp;&gt;&nbsp;k points and send those. Any k survivors pin the polynomial back down; the other n&nbsp;−&nbsp;k are pure, interchangeable spares. There is one catch — drawing curves through bytes requires an arithmetic where bytes divide cleanly, no rounding, no infinities. Such an arithmetic exists: the finite field GF(256), where addition is XOR and every one of the 255 nonzero bytes has an exact reciprocal. The line under the figure is not an analogy — those are real bytes, computed by the same encoder that armors the hero. <span class="aside" style="display:inline">(In practice, this page included, the code is built in its equivalent <em>systematic</em> form — parity from a generator polynomial, message riding untouched in front — but the any-k-survivors guarantee is the same theorem wearing work clothes.)</span></p>
     </section>
 
     <section class="chapter" id="ch7">
@@ -127,18 +131,18 @@
 
       <div class="map">
         <dl>
-          <div class="row"><dt>Compact discs</dt><dd>Two chained Reed–Solomon codes with cross-interleaving (CIRC) heal up to 4,000 bad bits — about 2.4&nbsp;mm of gouge. The 1979 spec assumed children would hold the disc with their fingers in the hole. They were right.</dd></div>
+          <div class="row"><dt>Compact discs</dt><dd>Two chained Reed–Solomon codes with cross-interleaving (CIRC) heal up to about 4,000 bad bits — roughly 2.5&nbsp;mm of gouge. The 1980 Red Book spec assumed real hands: fingerprints, scratches, children. It was right.</dd></div>
           <div class="row"><dt>QR codes</dt><dd>Reed–Solomon at four selectable strengths — up to 30% destroyed and it still scans, which is why a QR code survives having a logo stamped over its face.</dd></div>
           <div class="row"><dt>RAID-6</dt><dd>Two independent Reed–Solomon parity drives over GF(256): any two of your disks can die outright, and the array recomputes both from the survivors.</dd></div>
-          <div class="row"><dt>Voyager 1</dt><dd>RS(255,223) — the exact geometry of this essay’s hero — concatenated with a convolutional code, still phoning home from interstellar space after 48 years on a 23-watt radio.</dd></div>
-          <div class="row"><dt>Everything else</dt><dd>DSL, DVB, Blu-ray, DataMatrix, tape archives, ECC RAM. And the same idea, generalized, lives inside the LDPC and polar codes of Wi-Fi&nbsp;6, 5G, and SSDs. You have likely never gone an hour without an algebraic decoder quietly fixing the world under your fingers.</dd></div>
+          <div class="row"><dt>Voyager 1</dt><dd>RS(255,223) — big brother to the four RS(224,160) blocks armoring this essay’s hero — concatenated with a convolutional code, still phoning home from interstellar space after 48 years on a 23-watt radio.</dd></div>
+          <div class="row"><dt>Everything else</dt><dd>DSL, DVB, Blu-ray, DataMatrix, tape archives. ECC RAM carries Hamming’s own SECDED descendant from chapter 4. And the same idea, generalized, lives inside the LDPC and polar codes of Wi-Fi&nbsp;6, 5G, and SSDs. You have likely never gone an hour without an algebraic decoder quietly fixing the world under your fingers.</dd></div>
         </dl>
       </div>
     </section>
 
     <section class="chapter" id="colophon-notes">
       <div class="chapter-head"><span class="no">&amp;</span><h2>Notes &amp; further reading</h2></div>
-      <p class="aside">R. W. Hamming, <em>Error Detecting and Error Correcting Codes</em> (1950) · I. S. Reed &amp; G. Solomon, <em>Polynomial Codes over Certain Finite Fields</em> (1960) · E. R. Berlekamp, <em>Algebraic Coding Theory</em> (1968) · J. L. Massey, <em>Shift-Register Synthesis and BCH Decoding</em> (1969). The decoder in this page implements syndromes → Forney syndromes → Berlekamp–Massey → Chien search → Forney’s algorithm, in about three hundred readable lines — <a href="https://github.com/cleoanka/unscratchable">read the source</a>; it is tested by ten thousand random corruptions on every commit. For video, 3Blue1Brown’s Hamming pair is superb. For going deeper, the Wikiversity “Reed–Solomon codes for coders” guide is the classic on-ramp.</p>
+      <p class="aside">R. W. Hamming, <em>Error Detecting and Error Correcting Codes</em> (1950) · I. S. Reed &amp; G. Solomon, <em>Polynomial Codes over Certain Finite Fields</em> (1960) · E. R. Berlekamp, <em>Algebraic Coding Theory</em> (1968) · J. L. Massey, <em>Shift-Register Synthesis and BCH Decoding</em> (1969). The decoder in this page implements syndromes → Forney syndromes → Berlekamp–Massey → Chien search → Forney’s algorithm, in about three hundred readable lines — <a href="https://github.com/cleoanka/unscratchable">read the source</a>; it is tested by thousands of random corruptions on every commit. For video, 3Blue1Brown’s Hamming pair is superb. For going deeper, the Wikiversity “Reed–Solomon codes for coders” guide is the classic on-ramp.</p>
     </section>
 
   </div>

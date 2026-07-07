@@ -5,6 +5,12 @@
 // A codeword of length n = k + nsym survives any combination of e unknown
 // errors and f known erasures as long as 2e + f ≤ nsym.
 //
+// Beyond that budget, damage is USUALLY detected and reported — but bounded-
+// distance decoding cannot promise it: a word pushed past the guarantee can
+// land within another codeword's decoding sphere and decode, silently, to
+// the wrong message. That is a property of the mathematics, not a bug, and
+// chapter 7 of the essay demonstrates it honestly.
+//
 // Conventions (shared with gf256.js): arrays hold polynomial coefficients
 // with index 0 = highest degree; codeword index i corresponds to the
 // coefficient of x^(n−1−i), so the message rides in front and parity trails.
@@ -145,6 +151,9 @@ export class RS {
     if (n <= this.nsym) return { ok: false, reason: 'block shorter than parity' };
 
     const cw = Uint8Array.from(cwIn);
+    // duplicates are collapsed and out-of-range indices dropped — a wrong
+    // erasure hint silently becomes an unknown error costing 2 budget units,
+    // so callers should pass accurate positions (codec.js derives its own)
     const erasures = [...new Set(erasePos)].filter((p) => p >= 0 && p < n);
     if (erasures.length > this.nsym) {
       return { ok: false, reason: `${erasures.length} erasures exceed the ${this.nsym}-byte parity budget` };

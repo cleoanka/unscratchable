@@ -2,14 +2,14 @@
 // bit R times, take a majority vote. It works — at a brutal price — and a
 // two-hit strike still gets through. Click any copy to flip it by hand.
 
-import { Figure, C, mono, fade, uiBar, slider, segmented, button, note, spacer, REDUCED } from './figure.js';
+import { Figure, C, mono, fade, uiBar, slider, segmented, button, note, spacer, reducedMotion } from './figure.js';
 import { mulberry32 } from '../prng.js';
 
 const WORD = 'HI';
 
 export class Repetition extends Figure {
   constructor(mount) {
-    super(mount, { aspect: 0.42, minH: 280, maxH: 340 });
+    super(mount, { aspect: 0.42, minH: 280, maxH: 340, touch: 'tap' });
     this.bytes = [...WORD].map((c) => c.charCodeAt(0));
     this.nBits = this.bytes.length * 8;
     this.R = 3;
@@ -80,14 +80,14 @@ export class Repetition extends Figure {
     const L = this.#layout(this.w, this.h);
     const col = Math.floor((x - L.x0) / L.gw);
     if (col < 0 || col >= this.nBits) return;
-    const row = Math.round((y - L.top - L.gap / 2) / L.gap - 0.5);
+    const row = Math.floor((y - L.top) / L.gap);
     if (row < 0 || row >= this.R) return;
     this.flips[col][row] = !this.flips[col][row];
     this.#stat();
   }
 
   update() {
-    if (!REDUCED && this.t - this.lastRoll > 3.6) {
+    if (!reducedMotion() && this.t - this.lastRoll > 3.6) {
       this.lastRoll = this.t;
       this.roll();
     }

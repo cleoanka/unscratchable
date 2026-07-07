@@ -9,7 +9,7 @@
   --edge-soft: #221f1a;
   --text: #e8e2d3;
   --dim: #9b9483;
-  --faint: #5f594a;
+  --faint: #8a8371; /* quietest text tone that still clears 4.5:1 on the panel */
   --rust: #e0533d;
   --heal: #3ddc84;
   --gold: #c8a24b;
@@ -164,7 +164,9 @@ figure.fig {
 }
 
 .fig-body { position: relative; }
-.fig-body canvas { display: block; width: 100%; border-radius: 6px; background: var(--ink); touch-action: none; }
+/* touch-action is set per-figure in JS: tap-only figures allow vertical pans */
+.fig-body canvas { display: block; width: 100%; border-radius: 6px; background: var(--ink); }
+.fig-body canvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 figcaption {
   font-family: var(--mono);
@@ -307,3 +309,12 @@ footer.colophon a:hover { color: var(--gold); }
 .skip:focus { left: 0.5rem; top: 0.5rem; }
 
 noscript .fig-note { display: block; padding: 1rem; }
+
+@media print {
+  :root { --ink: #ffffff; --panel: #ffffff; --panel-2: #f4f2ec; --edge: #cfcabd; --edge-soft: #e2ddd0; --text: #1c1a16; --dim: #4a463c; --faint: #6b6557; }
+  body { background: #fff; color: #1c1a16; }
+  .masthead h1, .chapter-head h2, strong { color: #000; }
+  .fig-body canvas, .fig-ui, .skip { display: none; }
+  figure.fig::after { content: 'interactive figure — visit cleoanka.github.io/unscratchable'; font-family: var(--mono); font-size: 0.7rem; color: #6b6557; }
+  a { color: #4a463c; }
+}
