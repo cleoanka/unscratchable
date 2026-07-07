@@ -148,19 +148,17 @@ main { padding-bottom: 6rem; }
 /* ---------- figures ---------- */
 
 figure.fig {
-  margin: 2.2rem auto;
-  max-width: var(--wide);
-  width: calc(100vw - 2.5rem);
+  margin: 2.2rem 0;
+  width: min(calc(100vw - 2.5rem), var(--wide));
+  /* figures breathe wider than the text column, centered on the viewport */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 10px;
   padding: 0.9rem;
   box-shadow: 0 1px 0 rgba(255, 244, 214, 0.03) inset, 0 18px 48px -32px rgba(0, 0, 0, 0.9);
-}
-
-/* let figures breathe wider than the text column */
-@media (min-width: 60rem) {
-  figure.fig { position: relative; left: 50%; transform: translateX(-50%); }
 }
 
 .fig-body { position: relative; }
