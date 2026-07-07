@@ -1,0 +1,12 @@
+{
+  "name": "unscratchable",
+  "version": "1.0.0",
+  "description": "Scratch this message. It heals. An interactive essay on error-correcting codes.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "serve": "python3 -m http.server 8907"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you reference this essay, a link is plenty — but here is a citation if you want one."
+title: "unscratchable: an interactive essay on error-correcting codes"
+authors:
+  - family-names: ""
+    given-names: "cleoanka"
+year: 2026
+url: "https://cleoanka.github.io/unscratchable/"
+repository-code: "https://github.com/cleoanka/unscratchable"
+license: MIT

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>unscratchable — an interactive essay on error-correcting codes</title>
+<meta name="description" content="Scratch this message. It heals. An interactive essay on error-correcting codes — from parity bits to Reed–Solomon — with zero dependencies.">
+<meta property="og:title" content="unscratchable">
+<meta property="og:description" content="Scratch this message. It heals. An interactive essay on error-correcting codes, from parity bits to Reed–Solomon.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cleoanka.github.io/unscratchable/">
+<meta property="og:image" content="https://cleoanka.github.io/unscratchable/assets/social.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23100f0d'/%3E%3Cpath d='M6 24 L24 7' stroke='%23e0533d' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M8 26 L26 9' stroke='%233ddc84' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/essay.css">
+</head>
+<body>
+<a class="skip" href="#ch0">skip to the demonstration</a>
+
+<header class="masthead">
+  <p class="kicker">an interactive essay</p>
+  <h1>unscratchable</h1>
+  <p class="subtitle">Scratch this message. It heals. This is the mathematics that lets data survive our world.</p>
+  <p class="byline">CANVAS &amp; CODE, NO DEPENDENCIES · <a href="https://github.com/cleoanka/unscratchable">SOURCE ON GITHUB</a></p>
+  <hr class="rule">
+</header>
+
+<main>
+  <div class="essay">
+
+    <section class="chapter" id="ch0">
+      <div class="chapter-head"><span class="no">0</span><h2>The unscratchable message</h2></div>
+      <p>Below is a message stored the way a compact disc, a QR code, or a deep-space probe would store it. Take the brush and gouge it. Scribble hard. When you let go, watch what the mathematics does.</p>
+
+      <figure class="fig" aria-label="Interactive: scratch the stored message with your pointer and watch Reed–Solomon decoding restore it" data-figure="hero">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 0</span> — The canvas is a literal view of storage: every cell is drawn from stored bytes, the brush overwrites real bytes with garbage, and healing runs a real Reed–Solomon decoder in your browser. Nothing here is faked. Push it too far — the armor is finite, and the failure is as honest as the healing.</figcaption>
+      </figure>
+
+      <p>No hidden copy was kept. The bytes you destroyed were <em>gone</em>, and the survivors held enough structure to name every missing byte and compute every one of their values back into existence. That golden strip at the bottom is not a backup — it is something far stranger, and by the end of this essay you will know exactly how it works.</p>
+      <p class="aside">One honest disclosure up front: the surface tells the decoder <em>where</em> it was scratched — the way a CD player knows which frames came back illegible. Damage with known addresses is called an <em>erasure</em>. Silent corruption, where the decoder must find the damage first, costs exactly twice as much to fix. Chapter 7 lets you feel that factor of two.</p>
+    </section>
+
+    <section class="chapter" id="ch1">
+      <div class="chapter-head"><span class="no">1</span><h2>A world that flips bits</h2></div>
+      <p>Every medium betrays you. Cosmic rays flip bits in RAM; scratches blind lasers; thermal noise whispers over every wire ever made. The physical world does not have a clean channel to offer — only noisy ones. Here is a five-letter word crossing such a channel. Each bit survives only with probability 1&nbsp;−&nbsp;p.</p>
+
+      <figure class="fig" aria-label="Interactive: a word crosses a noisy channel; slide the noise level, click bits to flip them" data-figure="channel">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 1</span> — “HELLO”, one bit at a time. Slide the noise up. Click any bit to flip it yourself and watch what one wrong bit does to a letter.</figcaption>
+      </figure>
+
+      <p>Even at 2% noise — a channel far better than a scratched disc — a 40-bit message arrives intact less than half the time. Sending raw data through the world is not engineering. It is prayer.</p>
+    </section>
+
+    <section class="chapter" id="ch2">
+      <div class="chapter-head"><span class="no">2</span><h2>Say everything three times</h2></div>
+      <p>The obvious fix is the one every human already knows: repeat yourself. Send each bit three times and let the majority speak. This genuinely works — it is the first error-correcting code, and it already contains the whole subject in miniature. It also has two ugly problems.</p>
+
+      <figure class="fig" aria-label="Interactive: repetition code with majority vote; choose 1, 3 or 5 copies and set the noise" data-figure="repetition">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 2</span> — Each column is one bit, sent R times. The vote sits below. Click copies to flip them by hand — two hits on the same bit and the majority lies to you.</figcaption>
+      </figure>
+
+      <p>Problem one is the price: tripling every bit buys you a disk that is one-third useful. Problem two is subtler and worse: repetition spends its redundancy stupidly. It protects each bit in isolation, learning nothing from the other bits, so two unlucky hits on the same triple still get through. Sixty years of coding theory is, at heart, one question: <strong>can redundancy be spent on the message as a whole, instead of on each bit alone?</strong></p>
+    </section>
+
+    <section class="chapter" id="ch3">
+      <div class="chapter-head"><span class="no">3</span><h2>Distance is safety</h2></div>
+      <p>To spend redundancy wisely, you first need to see what it buys. Picture every possible 3-bit string as a corner of a cube, where crossing one edge flips one bit. Now choose your <em>codewords</em> — the strings you actually allow yourself to send — to be 000 and 111: the repetition code again, seen with new eyes.</p>
+
+      <figure class="fig" aria-label="Interactive: rotatable cube of 3-bit strings showing codewords 000 and 111 and their decoding spheres" data-figure="cube">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 3</span> — The eight 3-bit strings. Gold-ringed corners are codewords. Click any corner to see where it decodes; turn on the spheres to see the deeper fact.</figcaption>
+      </figure>
+
+      <p>The two codewords sit at <em>Hamming distance</em> 3 — you must flip three bits to turn one into the other. That gap is the entire secret. One flip leaves you still nearer the truth than the lie, so the nearest codeword is the right one. And notice something almost too neat: the two decoding spheres tile the cube exactly, every corner claimed by exactly one codeword, no gaps, no overlaps. Codes this efficient are called <em>perfect</em>, and they are vanishingly rare. You are about to meet the most famous one.</p>
+    </section>
+
+    <section class="chapter" id="ch4">
+      <div class="chapter-head"><span class="no">4</span><h2>Seven bits, one confession</h2></div>
+      <p>In 1950, Richard Hamming — tired of weekends lost to a computer that halted at every parity error — found a way to make redundancy <em>overlap</em>. Take four data bits. Add three parity bits, each one watching a different, deliberately overlapping crew of four positions. Seven bits total, drawn here as three circles.</p>
+
+      <figure class="fig" aria-label="Interactive: Hamming(7,4) as three overlapping parity circles; click bits to flip them and read the syndrome" data-figure="venn">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 4</span> — Hamming(7,4). Click any bit — data or parity — to flip it in transit. The broken circles intersect at exactly one region: the culprit. Flip two and watch the code confidently accuse the wrong bit; every code has a budget, and honesty about the budget is part of the design.</figcaption>
+      </figure>
+
+      <p>Flip any single bit and the three parity checks do not merely complain — they <em>testify</em>. Read the broken checks as a binary number and it spells out the position of the flipped bit: the error is made to confess its own address. Note what happened to the price, too: repetition needed 300% overhead to fix one error; Hamming does it for 75%. And this is another perfect code — sixteen codewords whose distance-1 spheres tile all 128 corners of the 7-cube exactly.</p>
+      <p class="aside">The syndrome trick is not a coincidence of small numbers. Hamming placed the parity bits at positions 1, 2, 4 — the powers of two — so that “which checks broke” and “binary address of the error” become the same thing. It is one of the most elegant address-buses ever built, and it is made of nothing.</p>
+    </section>
+
+    <section class="chapter" id="ch5">
+      <div class="chapter-head"><span class="no">5</span><h2>The scratch problem</h2></div>
+      <p>Hamming armors you against a random, lonely bit-flip. But look at the damage the real world actually deals: a scratch, a scuff, a burst of interference. Real damage arrives in <em>runs</em> — and a run of damage lands on one codeword like a fist, blowing straight through any per-word budget. The fix costs nothing but cleverness: don’t store codewords side by side. Shuffle them.</p>
+
+      <figure class="fig" aria-label="Interactive: drag a scratch over sequential versus interleaved block layouts and compare survival" data-figure="interleave">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 5</span> — The same four codewords, written two ways, wounded by the same scratch. Drag it; widen it. Interleaving turns one fatal wound into four survivable ones.</figcaption>
+      </figure>
+
+      <p>Interleaving is why a CD shrugs off a 2.4-millimeter gouge: its data is braided so that neighboring bytes on the disc belong to distant codewords. The scratch is not prevented. It is <em>diluted</em> — converted from the error pattern codes fear most into the one they handle best. The hero at the top of this page is braided the same way, which is why your wildest scribble was spread thin across many blocks.</p>
+    </section>
+
+    <section class="chapter" id="ch6">
+      <div class="chapter-head"><span class="no">6</span><h2>Any k points</h2></div>
+      <p>One idea remains, and it is the crown jewel. Hamming protects bits; scratches destroy whole bytes. For that we jump from bits to curves. Here is the fact everyone meets in school, wearing its true face at last: <strong>three points determine a parabola — any three.</strong></p>
+
+      <figure class="fig" aria-label="Interactive: three draggable message points define a parabola sampled at seven places; destroy points and recover the curve" data-figure="polynomial">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 6</span> — The three gold points are the message. Sampling the parabola at seven places mails four spares along for free. Destroy any four points — <em>any</em> four — and the survivors rebuild the curve exactly. Destroy a fifth and it dissolves into maybes.</figcaption>
+      </figure>
+
+      <p>That is the entire idea of Reed–Solomon codes, published by Irving Reed and Gustave Solomon in 1960 on five quiet pages. Treat your k message bytes as the coefficients of a polynomial. Evaluate it at n&nbsp;&gt;&nbsp;k points and send those. Any k survivors pin the polynomial back down; the other n&nbsp;−&nbsp;k are pure, interchangeable spares. There is one catch — drawing curves through bytes requires an arithmetic where bytes divide cleanly, no rounding, no infinities. Such an arithmetic exists: the finite field GF(256), where addition is XOR and every one of the 255 nonzero bytes has an exact reciprocal. The line under the figure is not an analogy — those are real bytes, computed by the same decoder that healed the hero.</p>
+    </section>
+
+    <section class="chapter" id="ch7">
+      <div class="chapter-head"><span class="no">7</span><h2>The healing machine</h2></div>
+      <p>Now you own every part of the machine from the first scribble: bytes become polynomial evaluations over GF(256) <em>(chapter 6)</em>, blocks are braided against bursts <em>(5)</em>, damage with a known address costs one spare to fix while silent corruption costs two <em>(0 and 4 — finding an error is half the work)</em>. Here is the machine with the hood open. Write your own message. Tune the armor. Try to kill it.</p>
+
+      <figure class="fig" aria-label="Interactive: full Reed–Solomon playground with adjustable message, redundancy, brush, and damage mode" data-figure="finale">
+        <div class="fig-body"></div>
+        <figcaption><span class="fig-no">FIG. 7</span> — The full stack, no autopilot: you pull the lever. Switch to <em>silent corruption</em> and watch the same brushwork cost exactly double — Berlekamp–Massey must deduce the damage map that scratches gave away for free.</figcaption>
+      </figure>
+
+      <p>And that is the whole secret you scratched at in chapter 0: not a backup, not a copy — a message deliberately over-determined, braided against bursts, wearing spare evaluations of itself as armor.</p>
+
+      <div class="map">
+        <dl>
+          <div class="row"><dt>Compact discs</dt><dd>Two chained Reed–Solomon codes with cross-interleaving (CIRC) heal up to 4,000 bad bits — about 2.4&nbsp;mm of gouge. The 1979 spec assumed children would hold the disc with their fingers in the hole. They were right.</dd></div>
+          <div class="row"><dt>QR codes</dt><dd>Reed–Solomon at four selectable strengths — up to 30% destroyed and it still scans, which is why a QR code survives having a logo stamped over its face.</dd></div>
+          <div class="row"><dt>RAID-6</dt><dd>Two independent Reed–Solomon parity drives over GF(256): any two of your disks can die outright, and the array recomputes both from the survivors.</dd></div>
+          <div class="row"><dt>Voyager 1</dt><dd>RS(255,223) — the exact geometry of this essay’s hero — concatenated with a convolutional code, still phoning home from interstellar space after 48 years on a 23-watt radio.</dd></div>
+          <div class="row"><dt>Everything else</dt><dd>DSL, DVB, Blu-ray, DataMatrix, tape archives, ECC RAM. And the same idea, generalized, lives inside the LDPC and polar codes of Wi-Fi&nbsp;6, 5G, and SSDs. You have likely never gone an hour without an algebraic decoder quietly fixing the world under your fingers.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="chapter" id="colophon-notes">
+      <div class="chapter-head"><span class="no">&amp;</span><h2>Notes &amp; further reading</h2></div>
+      <p class="aside">R. W. Hamming, <em>Error Detecting and Error Correcting Codes</em> (1950) · I. S. Reed &amp; G. Solomon, <em>Polynomial Codes over Certain Finite Fields</em> (1960) · E. R. Berlekamp, <em>Algebraic Coding Theory</em> (1968) · J. L. Massey, <em>Shift-Register Synthesis and BCH Decoding</em> (1969). The decoder in this page implements syndromes → Forney syndromes → Berlekamp–Massey → Chien search → Forney’s algorithm, in about three hundred readable lines — <a href="https://github.com/cleoanka/unscratchable">read the source</a>; it is tested by ten thousand random corruptions on every commit. For video, 3Blue1Brown’s Hamming pair is superb. For going deeper, the Wikiversity “Reed–Solomon codes for coders” guide is the classic on-ramp.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer class="colophon">
+  <p>unscratchable · an interactive essay built with canvas, zero dependencies, and affection for finite fields<br>
+  MIT licensed · <a href="https://github.com/cleoanka/unscratchable">github.com/cleoanka/unscratchable</a> · every figure is honest: the math on screen is the math in the source</p>
+</footer>
+
+<noscript><p class="fig-note" style="text-align:center">The figures need JavaScript — the essay is interactive all the way down.</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
