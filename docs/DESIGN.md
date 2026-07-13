@@ -42,7 +42,8 @@ Hero (ch. 0) and Hamming Venn (ch. 4) get the deepest polish; they are the GIFs.
 - `js/prng.js` — mulberry32 seeded PRNG so every demo and GIF reproduces exactly.
 
 Verification: `node --test` property suites — field axioms over all 255 units;
-10k-trial random encode→corrupt→decode round-trips at every legal error/erasure budget;
+thousands of seeded random encode→corrupt→decode round-trips at every legal
+error/erasure budget;
 beyond-budget corruption must be flagged failed, never silently wrong; Hamming corrects
 all 1-bit errors of all 16 messages. Plus an independent-implementation cross-check
 during review (a second agent writes RS from scratch; outputs must agree byte-for-byte).
