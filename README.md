@@ -73,6 +73,9 @@ No frameworks, no build step, no analytics, no network calls. `index.html` + CSS
 npm test          # = node --test  (Node ≥ 20, no packages needed)
 ```
 
+CI runs this suite on Node 20 and 22, and syntax-checks every module with
+`node --check`, on every push and pull request.
+
 ## Run it locally
 
 ```sh
