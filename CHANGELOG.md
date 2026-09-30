@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Light theme (archival paper) alongside the dark house style. The page follows
+  the device setting by default; a moon/sun button in the top-right corner
+  switches it and remembers the choice. Canvas figures recolour live.
+
 ### Changed
 - Optimized `assets/hero.gif` (2.46 MB → ~1.0 MB) and `assets/venn.gif`
   (0.96 MB → ~0.4 MB) with an ffmpeg palette pass, scaled to their README

@@ -3,7 +3,10 @@
 // the figure scrolls out of view, and DOM-based controls (buttons, sliders,
 // segmented toggles) so keyboards and screen readers get real elements.
 
-export const C = {
+// Canvas palette. Dark is the house style; LIGHT mirrors the paper theme in
+// essay.css. C is mutated in place on theme changes, and every widget reads it
+// at draw time, so figures recolour on the next frame.
+const DARK = {
   ink: '#100f0d',
   panel: '#171613',
   panel2: '#1c1a16',
@@ -16,8 +19,39 @@ export const C = {
   rust: '#e0533d',
   heal: '#3ddc84',
   gold: '#c8a24b',
+  shade: '#000000',
   blocks: ['#6b7f99', '#7d8f6b', '#a17860', '#8b6b8f', '#997f6b', '#6b9990'],
 };
+const LIGHT = {
+  ink: '#f5f1e7',
+  panel: '#fbf8f0',
+  panel2: '#efe9dc',
+  edge: '#d6cebd',
+  edgeSoft: '#e4ddcf',
+  text: '#26221b',
+  bright: '#110f0b',
+  dim: '#5c5649',
+  faint: '#6f6858',
+  rust: '#c0402b',
+  heal: '#178a4b',
+  gold: '#8f6a17',
+  shade: '#26221b',
+  blocks: ['#4f6480', '#5d7148', '#8a5a40', '#71507a', '#80624b', '#437a70'],
+};
+export const C = { ...DARK };
+
+const lightQuery = typeof matchMedia !== 'undefined' ? matchMedia('(prefers-color-scheme: light)') : null;
+export function isLight() {
+  const t = typeof document !== 'undefined' ? document.documentElement.getAttribute('data-theme') : null;
+  if (t) return t === 'light';
+  return lightQuery ? lightQuery.matches : false;
+}
+export function applyTheme() {
+  Object.assign(C, isLight() ? LIGHT : DARK);
+  if (typeof document !== 'undefined') document.documentElement.classList.toggle('is-dark', !isLight());
+}
+applyTheme();
+if (lightQuery) (lightQuery.addEventListener ? lightQuery.addEventListener('change', applyTheme) : lightQuery.addListener(applyTheme));
 
 export const MONO = "ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace";
 export const SERIF = "'Iowan Old Style', 'Palatino Linotype', Palatino, Charter, Georgia, serif";

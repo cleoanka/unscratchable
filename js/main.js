@@ -6,6 +6,7 @@ import { Venn } from './widgets/venn.js';
 import { Interleave } from './widgets/interleave.js';
 import { Polynomial } from './widgets/polynomial.js';
 import { Finale } from './widgets/finale.js';
+import { applyTheme, isLight } from './widgets/figure.js';
 
 const REGISTRY = {
   hero: Hero,
@@ -47,4 +48,18 @@ if (demo) {
     .demo main .chapter { margin-top: 1rem; }
   `;
   document.head.appendChild(style);
+}
+
+// theme toggle: picking what the device already prefers means "follow the device" again
+const themeBtn = document.getElementById('themeBtn');
+if (themeBtn) {
+  themeBtn.addEventListener('click', () => {
+    const next = isLight() ? 'dark' : 'light';
+    const device = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    try {
+      if (next === device) { document.documentElement.removeAttribute('data-theme'); localStorage.removeItem('theme'); }
+      else { document.documentElement.setAttribute('data-theme', next); localStorage.setItem('theme', next); }
+    } catch (e) { document.documentElement.setAttribute('data-theme', next); }
+    applyTheme();
+  });
 }

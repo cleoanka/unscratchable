@@ -123,7 +123,7 @@ export class Interleave extends Figure {
         }
         ctx.fillRect(x, y, L.cs - 1, L.cs * 1.7);
         if (parity && !inBurst(i)) {
-          ctx.fillStyle = fade('#000000', 0.35);
+          ctx.fillStyle = fade(C.shade, 0.35);
           ctx.fillRect(x, y + L.cs * 1.7 - 4, L.cs - 1, 4);
         }
         if (dead && !inBurst(i)) {
