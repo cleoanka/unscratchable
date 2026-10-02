@@ -3,7 +3,7 @@
 // column-by-column. Drag the scratch; watch who survives. Each block heals
 // up to 4 erased bytes — the only question is how many the burst lands on it.
 
-import { Figure, C, mono, fade, uiBar, slider, note, spacer } from './figure.js';
+import { Figure, C, mono, fade, uiBar, slider, note, spacer, t } from './figure.js';
 
 const B = 4;        // blocks
 const K = 10;       // data bytes per block
@@ -20,7 +20,7 @@ export class Interleave extends Figure {
 
     // keyboard path for the primary interaction: arrows slide the scratch
     this.canvas.tabIndex = 0;
-    this.canvas.setAttribute('aria-label', 'scratch position — arrow keys slide the burst across both layouts');
+    this.canvas.setAttribute('aria-label', t('i_aria'));
     this.canvas.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') this.burstStart -= 2;
       else if (e.key === 'ArrowRight') this.burstStart += 2;
@@ -34,7 +34,7 @@ export class Interleave extends Figure {
     this.verdict = note(bar, '');
     spacer(bar);
     slider(bar, {
-      label: 'scratch width', min: 2, max: 24, value: 9,
+      label: t('i_scratchWidth'), min: 2, max: 24, value: 9,
       format: (v) => `${v}B`,
       onInput: (v) => {
         this.burstLen = v;
@@ -65,11 +65,11 @@ export class Interleave extends Figure {
     const seqDead = seq.filter((v) => v > NSYM).length;
     const ilDead = il.filter((v) => v > NSYM).length;
     if (seqDead && !ilDead) {
-      this.verdict.set(`same scratch: sequential loses ${seqDead} block${seqDead > 1 ? 's' : ''} · interleaved heals everything`, 'heal');
+      this.verdict.set(t('i_seqLoses', seqDead), 'heal');
     } else if (!seqDead && !ilDead) {
-      this.verdict.set('this scratch is small enough for both layouts — widen it', '');
+      this.verdict.set(t('i_bothSurvive'), '');
     } else if (ilDead) {
-      this.verdict.set(`even interleaving drowns: ${this.burstLen} bytes over ${B} blocks exceeds ${NSYM}/block`, 'rust');
+      this.verdict.set(t('i_bothDrown', this.burstLen, B, NSYM), 'rust');
     }
   }
 
@@ -137,8 +137,8 @@ export class Interleave extends Figure {
 
     };
 
-    strip(L.y1, 'SEQUENTIAL — BLOCK AFTER BLOCK', (i) => Math.floor(i / N), (i) => i % N >= K, seq);
-    strip(L.y2, 'INTERLEAVED — COLUMN BY COLUMN', (i) => i % B, (i) => Math.floor(i / B) >= K, il);
+    strip(L.y1, t('i_seqLabel'), (i) => Math.floor(i / N), (i) => i % N >= K, seq);
+    strip(L.y2, t('i_ilLabel'), (i) => i % B, (i) => Math.floor(i / B) >= K, il);
 
     // tallies under each strip — wrap onto extra rows at narrow widths
     const tally = (y, loads) => {
@@ -148,7 +148,8 @@ export class Interleave extends Figure {
       let ty = y;
       for (let b = 0; b < B; b++) {
         const over = loads[b] > NSYM;
-        const s = `■ blk${b} ${loads[b]}/${NSYM}${over ? ' ✕' : loads[b] > 0 ? ' ✓' : ''}`;
+        const mark = over ? t('i_lost') : loads[b] > 0 ? t('i_ok') : '';
+        const s = t('i_blk', b, loads[b], NSYM, mark);
         const sw = ctx.measureText(s).width + 26;
         if (tx > L.x0 && tx + sw > w - 12) {
           tx = L.x0;
@@ -177,6 +178,6 @@ export class Interleave extends Figure {
     ctx.font = mono(10);
     ctx.textAlign = 'center';
     ctx.fillStyle = C.rust;
-    ctx.fillText('⟵ SCRATCH · drag ⟶', sx + swidth / 2, L.y1 - 32);
+    ctx.fillText(t('i_scratch'), sx + swidth / 2, L.y1 - 32);
   }
 }

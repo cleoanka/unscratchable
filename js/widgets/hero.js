@@ -3,26 +3,26 @@
 // record the README GIF (?demo=1).
 
 import { StorageSurface } from './surface.js';
-import { uiBar, button, slider, note, spacer } from './figure.js';
+import { uiBar, button, slider, note, spacer, t } from './figure.js';
 
 export class Hero extends StorageSurface {
   constructor(mount, { demo = false } = {}) {
     super(mount, {
-      cols: 128, rows: 40, nsym: 64, message: 'UNSCRATCHABLE',
+      cols: 128, rows: 40, nsym: 64, message: t('h_message'),
       autoHeal: true, aspect: 0.5, minH: 320, maxH: 470,
     });
     this.demo = demo;
 
     const bar = uiBar(mount);
-    this.meter = note(bar, 'drag across the message to scratch it');
+    this.meter = note(bar, t('h_dragMsg'));
     spacer(bar);
     this.brushCtl = slider(bar, {
-      label: 'brush', min: 1, max: 4, value: 2,
-      format: (v) => ['fine', 'thin', 'wide', 'brutal'][v - 1],
+      label: t('brush'), min: 1, max: 4, value: 2,
+      format: (v) => t('brushLevels')[v - 1],
       onInput: (v) => { this.brushCells = v; },
     });
-    button(bar, 'heal now', () => this.heal(), 'primary');
-    button(bar, 'reset', () => this.reset());
+    button(bar, t('h_healNow'), () => this.heal(), 'primary');
+    button(bar, t('reset'), () => this.reset());
 
     if (demo) {
       this.touched = true; // suppress the hint
@@ -33,23 +33,23 @@ export class Hero extends StorageSurface {
   onDamageChange() {
     if (!this.meter) return;
     if (this.erased.size === 0) {
-      this.meter.set('drag across the message to scratch it');
+      this.meter.set(t('h_dragMsg'));
       return;
     }
     const load = this.perBlockLoad();
     const worst = Math.max(...load);
     const over = worst > this.budget();
-    const msg = `${this.erased.size} bytes gouged · worst block ${worst}/${this.budget()}`;
-    this.meter.set(over ? `${msg} — beyond repair` : `${msg} — still healable`, over ? 'rust' : 'heal');
+    const msg = t('h_gouged', this.erased.size, worst, this.budget());
+    this.meter.set(over ? msg + t('h_beyond') : msg + t('h_healable'), over ? 'rust' : 'heal');
   }
 
   onHealed(ok, n, miscorrected) {
     if (miscorrected) {
-      this.meter.set('the decoder converged on a DIFFERENT valid codeword — silent miscorruption; damage was beyond the guarantee', 'rust');
+      this.meter.set(t('h_miscorrupt'), 'rust');
     } else if (ok) {
-      this.meter.set(`healed ${this.erased.size === 0 ? n : n - this.erased.size} bytes across ${this.meta.blockCount} blocks in ${this.decodeMs.toFixed(1)} ms`, 'heal');
+      this.meter.set(t('h_healed', this.erased.size === 0 ? n : n - this.erased.size, this.meta.blockCount, this.decodeMs.toFixed(1)), 'heal');
     } else {
-      this.meter.set(`${this.failedBlocks.size} of ${this.meta.blockCount} blocks over their ${this.budget()}-byte budget — their bytes are gone · reset to start over`, 'rust');
+      this.meter.set(t('h_blocksLost', this.failedBlocks.size, this.meta.blockCount, this.budget()), 'rust');
     }
   }
 

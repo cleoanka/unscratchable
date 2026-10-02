@@ -4,12 +4,12 @@
 // (errors, at half the budget). Healing is manual — you pull the lever.
 
 import { StorageSurface } from './surface.js';
-import { C, mono, fade, uiBar, button, slider, segmented, note, spacer } from './figure.js';
+import { C, mono, fade, uiBar, button, slider, segmented, note, spacer, t } from './figure.js';
 
 export class Finale extends StorageSurface {
   constructor(mount) {
     super(mount, {
-      cols: 112, rows: 30, nsym: 48, message: 'ATOMS DECAY. THIS WON’T.',
+      cols: 112, rows: 30, nsym: 48, message: t('f_message'),
       autoHeal: false, aspect: 0.56, minH: 360, maxH: 520,
     });
 
@@ -19,19 +19,19 @@ export class Finale extends StorageSurface {
     input.className = 'fig-text';
     input.maxLength = 26;
     input.value = this.message;
-    input.setAttribute('aria-label', 'message to protect');
-    input.addEventListener('change', () => this.#reencode(input.value.trim() || 'SAY SOMETHING'));
+    input.setAttribute('aria-label', t('f_msgAria'));
+    input.addEventListener('change', () => this.#reencode(input.value.trim() || t('f_saySomething')));
     barTop.appendChild(input);
     this.redundancy = slider(barTop, {
-      label: 'parity', min: 8, max: 96, step: 8, value: this.nsym,
-      format: (v) => `${v}B/blk`,
+      label: t('f_parity'), min: 8, max: 96, step: 8, value: this.nsym,
+      format: (v) => t('f_parityFmt', v),
       onInput: (v) => this.#reencode(this.message, v),
     });
     segmented(barTop, {
-      label: 'damage',
+      label: t('f_damage'),
       options: [
-        { label: 'scratches (known)', value: true },
-        { label: 'silent corruption', value: false },
+        { label: t('f_scratchesKnown'), value: true },
+        { label: t('f_silentCorruption'), value: false },
       ],
       value: true,
       onChange: (v) => {
@@ -41,15 +41,15 @@ export class Finale extends StorageSurface {
     });
 
     const bar = uiBar(mount);
-    this.meter = note(bar, 'scratch, then pull the lever');
+    this.meter = note(bar, t('f_scratchLever'));
     spacer(bar);
     slider(bar, {
-      label: 'brush', min: 1, max: 4, value: 2,
-      format: (v) => ['fine', 'thin', 'wide', 'brutal'][v - 1],
+      label: t('brush'), min: 1, max: 4, value: 2,
+      format: (v) => t('brushLevels')[v - 1],
       onInput: (v) => { this.brushCells = v; },
     });
-    button(bar, '⟲ heal', () => this.heal(), 'primary');
-    button(bar, 'reset', () => this.reset());
+    button(bar, t('f_heal'), () => this.heal(), 'primary');
+    button(bar, t('reset'), () => this.reset());
   }
 
   #reencode(message, nsym = this.nsym) {
@@ -61,27 +61,25 @@ export class Finale extends StorageSurface {
   onDamageChange() {
     if (!this.meter) return;
     if (this.erased.size === 0) {
-      this.meter.set(this.knownDamage
-        ? 'scratch, then pull the lever'
-        : `silent mode: the decoder is told NOTHING about where you strike — budget halves to ${this.budget()}/block`);
+      this.meter.set(this.knownDamage ? t('f_scratchLever') : t('f_silentMode', this.budget()));
       return;
     }
     const worst = Math.max(...this.perBlockLoad());
     const over = worst > this.budget();
     this.meter.set(
-      `${this.erased.size} bytes damaged · worst block ${worst}/${this.budget()} ${this.knownDamage ? '' : '(unknown to the decoder!)'} — ${over ? 'past the guarantee' : 'within the guarantee'}`,
+      t('f_damaged', this.erased.size, worst, this.budget(), this.knownDamage, over),
       over ? 'rust' : 'heal',
     );
   }
 
   onHealed(ok, n, miscorrected) {
     if (miscorrected) {
-      this.meter.set('the decoder converged on a DIFFERENT valid codeword — silent miscorruption; this is what beyond-budget damage can do', 'rust');
+      this.meter.set(t('f_miscorrupt'), 'rust');
     } else if (ok) {
-      const how = this.knownDamage ? 'erasure decoding' : 'error hunting (Berlekamp–Massey found every location)';
-      this.meter.set(`healed ${n} bytes by ${how} in ${this.decodeMs.toFixed(1)} ms`, 'heal');
+      const how = this.knownDamage ? t('f_erasureDecoding') : t('f_errorHunting');
+      this.meter.set(t('f_healedBy', n, how, this.decodeMs.toFixed(1)), 'heal');
     } else {
-      this.meter.set(`${this.failedBlocks.size} of ${this.meta.blockCount} blocks lost — past ${this.knownDamage ? 'the erasure budget' : 'the half-budget for unknown damage'} · reset to start over`, 'rust');
+      this.meter.set(t('f_blocksLost', this.failedBlocks.size, this.meta.blockCount, this.knownDamage), 'rust');
     }
   }
 
@@ -97,7 +95,7 @@ export class Finale extends StorageSurface {
     ctx.font = mono(10);
     ctx.textAlign = 'left';
     ctx.fillStyle = C.faint;
-    ctx.fillText(`PER-BLOCK LOAD vs BUDGET (${budget} bytes ${this.knownDamage ? 'known' : 'unknown'} damage)`, L.gx, top - 7);
+    ctx.fillText(t('f_perBlock', budget, this.knownDamage), L.gx, top - 7);
 
     for (let b = 0; b < B; b++) {
       const x = L.gx + b * (bw + gap);
@@ -112,7 +110,7 @@ export class Finale extends StorageSurface {
       ctx.lineWidth = 1;
       ctx.strokeRect(x + 0.5, top + 0.5, bw - 1, 11);
       ctx.fillStyle = dead || over ? C.rust : C.dim;
-      ctx.fillText(`${load[b]}/${budget}${dead ? ' ✕ lost' : ''}`, x + 2, top + 24);
+      ctx.fillText(t('f_lost', load[b], budget, dead), x + 2, top + 24);
     }
   }
 }

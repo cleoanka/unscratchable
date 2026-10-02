@@ -5,7 +5,7 @@
 // The brush overwrites real payload bytes with garbage; healing runs the
 // real interleaved RS decoder. Nothing is faked.
 
-import { Figure, C, mono, fade, textBitmap, reducedMotion } from './figure.js';
+import { Figure, C, mono, fade, textBitmap, reducedMotion, t } from './figure.js';
 import { shield, unshield } from '../codec.js';
 import { mulberry32 } from '../prng.js';
 
@@ -229,8 +229,8 @@ export class StorageSurface extends Figure {
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = C.faint;
-    ctx.fillText(`DATA — ${this.dataBytes} BYTES (1 CELL = 1 BIT)`, L.gx, L.gy - 7);
-    ctx.fillText(`PARITY — ${this.parityBytes} BYTES OF ARMOR (1 CELL = 1 BYTE)`, L.gx, L.py - 7);
+    ctx.fillText(t('s_data', this.dataBytes), L.gx, L.gy - 7);
+    ctx.fillText(t('s_parity', this.parityBytes), L.gx, L.py - 7);
 
     const cs = L.cs;
     for (let cy = 0; cy < this.rows; cy++) {
@@ -284,7 +284,7 @@ export class StorageSurface extends Figure {
       ctx.font = mono(11);
       ctx.textAlign = 'right';
       ctx.fillStyle = fade(C.gold, pulse);
-      ctx.fillText('⟋ drag to scratch', w - 18, 20);
+      ctx.fillText(t('s_dragHint'), w - 18, 20);
     }
   }
 }

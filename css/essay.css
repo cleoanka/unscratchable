@@ -3,21 +3,23 @@
 
 /* dark is the house style; light follows the device unless the reader picks
    one with the moon/sun button (stored in localStorage "theme") */
+/* palette aligned to cleoanka.com so both sites share one background + neutrals;
+   rust = damage, heal = repair, gold = annotation (same roles as the main site) */
 :root {
-  --ink: #100f0d;
-  --panel: #171613;
-  --panel-2: #1c1a16;
-  --edge: #2a2823;
-  --edge-soft: #221f1a;
-  --text: #e8e2d3;
-  --bright: #fdf8ea;
-  --strong: #fff8e7;
-  --dim: #9b9483;
-  --faint: #8a8371; /* quietest text tone that still clears 4.5:1 on the panel */
-  --rust: #e0533d;
-  --heal: #3ddc84;
-  --gold: #c8a24b;
-  --shadow: 0 1px 0 rgba(255, 244, 214, 0.03) inset, 0 18px 48px -32px rgba(0, 0, 0, 0.9);
+  --ink: #0f1115;
+  --panel: #16191f;
+  --panel-2: #1c2026;
+  --edge: #2d333b;
+  --edge-soft: #242930;
+  --text: #d1d5db;
+  --bright: #f3f4f6;
+  --strong: #f3f4f6;
+  --dim: #9aa1ab;
+  --faint: #818892; /* quietest text tone that still clears 4.5:1 on the panel */
+  --rust: #fb7185;
+  --heal: #34d399;
+  --gold: #d4af37;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 16px 36px -18px rgba(0, 0, 0, 0.8);
   --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Charter, Georgia, serif;
   --mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
   --measure: 42rem;
@@ -26,22 +28,28 @@
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --ink: #f5f1e7; --panel: #fbf8f0; --panel-2: #efe9dc; --edge: #d6cebd; --edge-soft: #e4ddcf;
-    --text: #26221b; --bright: #110f0b; --strong: #000000; --dim: #5c5649; --faint: #6f6858;
-    --rust: #c0402b; --heal: #178a4b; --gold: #8f6a17;
-    --shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 18px 40px -30px rgba(60, 45, 20, 0.35);
+    --ink: #fcfcfc; --panel: #f4f5f7; --panel-2: #ebeef2; --edge: #d6dae1; --edge-soft: #e7e9ee;
+    --text: #374151; --bright: #111827; --strong: #111827; --dim: #5b6170; --faint: #696e76;
+    --rust: #be123c; --heal: #017e58; --gold: #846836;
+    --shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 12px 32px -18px rgba(17, 24, 39, 0.18);
     color-scheme: light;
   }
 }
 :root[data-theme="light"] {
-  --ink: #f5f1e7; --panel: #fbf8f0; --panel-2: #efe9dc; --edge: #d6cebd; --edge-soft: #e4ddcf;
-  --text: #26221b; --bright: #110f0b; --strong: #000000; --dim: #5c5649; --faint: #6f6858;
-  --rust: #c0402b; --heal: #178a4b; --gold: #8f6a17;
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 18px 40px -30px rgba(60, 45, 20, 0.35);
+  --ink: #fcfcfc; --panel: #f4f5f7; --panel-2: #ebeef2; --edge: #d6dae1; --edge-soft: #e7e9ee;
+  --text: #374151; --bright: #111827; --strong: #111827; --dim: #5b6170; --faint: #696e76;
+  --rust: #be123c; --heal: #017e58; --gold: #846836;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 12px 32px -18px rgba(17, 24, 39, 0.18);
   color-scheme: light;
 }
 
 * { box-sizing: border-box; }
+
+/* bilingual: both languages ship in the DOM; show only the active one.
+   JS sets html[data-lang]; with no JS the page falls back to English. */
+html[data-lang="tr"] [lang="en"],
+html[data-lang="en"] [lang="tr"],
+html:not([data-lang]) [lang="tr"] { display: none !important; }
 
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -339,6 +347,22 @@ footer.colophon a:hover { color: var(--gold); }
 .is-dark .theme-toggle .moon { display: none; }
 .demo .theme-toggle { display: none; }
 
+/* ---------- language toggle ---------- */
+
+.lang-toggle {
+  position: fixed; top: 1rem; right: 3.6rem; z-index: 20;
+  height: 2.2rem; min-width: 2.2rem; padding: 0 0.62rem; border-radius: 1.1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  border: 1px solid var(--edge); color: var(--dim); cursor: pointer;
+  font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.08em; font-weight: 600;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: border-color 120ms, color 120ms;
+}
+.lang-toggle:hover { border-color: var(--gold); color: var(--gold); }
+.lang-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.demo .lang-toggle { display: none; }
+
 /* ---------- misc ---------- */
 
 .skip {
@@ -351,10 +375,10 @@ footer.colophon a:hover { color: var(--gold); }
 noscript .fig-note { display: block; padding: 1rem; }
 
 @media print {
-  :root { --ink: #ffffff; --panel: #ffffff; --panel-2: #f4f2ec; --edge: #cfcabd; --edge-soft: #e2ddd0; --text: #1c1a16; --dim: #4a463c; --faint: #6b6557; }
-  body { background: #fff; color: #1c1a16; }
+  :root { --ink: #ffffff; --panel: #ffffff; --panel-2: #f1f3f6; --edge: #cfd4db; --edge-soft: #e4e7ec; --text: #1f2530; --dim: #454c57; --faint: #656b75; }
+  body { background: #fff; color: #1f2530; }
   .masthead h1, .chapter-head h2, strong { color: #000; }
   .fig-body canvas, .fig-ui, .skip { display: none; }
-  figure.fig::after { content: 'interactive figure — visit cleoanka.github.io/unscratchable'; font-family: var(--mono); font-size: 0.7rem; color: #6b6557; }
-  a { color: #4a463c; }
+  figure.fig::after { content: 'interactive figure — visit cleoanka.github.io/unscratchable'; font-family: var(--mono); font-size: 0.7rem; color: #656b75; }
+  a { color: #454c57; }
 }

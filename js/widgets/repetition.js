@@ -2,7 +2,7 @@
 // bit R times, take a majority vote. It works — at a brutal price — and a
 // two-hit strike still gets through. Click any copy to flip it by hand.
 
-import { Figure, C, mono, fade, uiBar, slider, segmented, button, note, spacer, reducedMotion } from './figure.js';
+import { Figure, C, mono, fade, uiBar, slider, segmented, button, note, spacer, reducedMotion, t } from './figure.js';
 import { mulberry32 } from '../prng.js';
 
 const WORD = 'HI';
@@ -22,17 +22,17 @@ export class Repetition extends Figure {
     this.stat = note(bar, '');
     spacer(bar);
     segmented(bar, {
-      label: 'copies',
+      label: t('copies'),
       options: [{ label: '1×', value: 1 }, { label: '3×', value: 3 }, { label: '5×', value: 5 }],
       value: 3,
       onChange: (v) => { this.R = v; this.roll(); },
     });
     slider(bar, {
-      label: 'noise', min: 0, max: 25, step: 0.5, value: 8,
+      label: t('noise'), min: 0, max: 25, step: 0.5, value: 8,
       format: (v) => `${v}%`,
       onInput: (v) => { this.p = v / 100; this.roll(); },
     });
-    button(bar, 'send again', () => this.roll());
+    button(bar, t('sendAgain'), () => this.roll());
     this.roll();
   }
 
@@ -60,7 +60,7 @@ export class Repetition extends Figure {
     const survive = Math.pow(1 - q, this.nBits);
     const lost = Array.from({ length: this.nBits }, (_, i) => i).filter((i) => this.votedBit(i) !== this.sentBit(i)).length;
     this.stat.set(
-      `${R * this.nBits} bits sent for ${this.nBits} bits of meaning · message survives ${(survive * 100).toFixed(survive > 0.995 ? 1 : 0)}% of sends · this send: ${lost === 0 ? 'clean' : `${lost} bit${lost > 1 ? 's' : ''} lost`}`,
+      t('r_stat', R * this.nBits, this.nBits, (survive * 100).toFixed(survive > 0.995 ? 1 : 0), lost === 0 ? t('r_clean') : t('r_lost', lost)),
       lost === 0 ? 'heal' : 'rust',
     );
   }
@@ -101,8 +101,8 @@ export class Repetition extends Figure {
     ctx.font = mono(10);
     ctx.textAlign = 'left';
     ctx.fillStyle = C.faint;
-    ctx.fillText(`EACH BIT × ${this.R}, AS RECEIVED`, L.x0, 26);
-    ctx.fillText('MAJORITY VOTE', L.x0, L.votedY - 13);
+    ctx.fillText(t('r_eachbit', this.R), L.x0, 26);
+    ctx.fillText(t('r_majority'), L.x0, L.votedY - 13);
 
     for (let i = 0; i < this.nBits; i++) {
       const cx = L.x0 + i * L.gw + L.gw / 2;
@@ -159,7 +159,7 @@ export class Repetition extends Figure {
     ctx.fillText(out, L.x0 + this.nBits * L.gw + 26, L.votedY + 10);
     ctx.font = mono(10);
     ctx.fillStyle = C.faint;
-    ctx.fillText('DECODED', L.x0 + this.nBits * L.gw + 26, L.votedY - 26);
+    ctx.fillText(t('r_decoded'), L.x0 + this.nBits * L.gw + 26, L.votedY - 26);
   }
 }
 

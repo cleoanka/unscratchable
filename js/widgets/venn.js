@@ -3,7 +3,7 @@
 // and when a bit flips, the pattern of broken circles spells out — in
 // binary — the exact position of the culprit.
 
-import { Figure, C, mono, fade, uiBar, button, note, spacer, reducedMotion } from './figure.js';
+import { Figure, C, mono, fade, uiBar, button, note, spacer, reducedMotion, t } from './figure.js';
 import { encode, decode } from '../hamming.js';
 import { mulberry32 } from '../prng.js';
 
@@ -17,36 +17,36 @@ export class Venn extends Figure {
     this.newMessage(0b1011);
 
     const bar = uiBar(mount);
-    this.info = note(bar, 'click any bit to flip it in transit', { live: true });
+    this.info = note(bar, t('v_click'), { live: true });
     spacer(bar);
-    button(bar, 'new message', () => this.newMessage());
-    button(bar, 'flip random bit', () => {
+    button(bar, t('v_newMsg'), () => this.newMessage());
+    button(bar, t('v_flipRandom'), () => {
       const p = 1 + Math.floor(this.rng() * 7);
       this.word[p - 1] ^= 1;
       this.#report();
     });
-    button(bar, 'repair', () => this.repair(), 'primary');
+    button(bar, t('v_repair'), () => this.repair(), 'primary');
   }
 
   newMessage(nibble = Math.floor(this.rng() * 16)) {
     this.nibble = nibble;
     this.sent = encode(nibble);
     this.word = [...this.sent];
-    this.info?.set('click any bit to flip it in transit');
+    this.info?.set(t('v_click'));
   }
 
   repair() {
     const { syndrome, corrected } = decode(this.word);
     if (syndrome === 0) {
-      this.info.set('nothing to repair — all three circles agree', 'heal');
+      this.info.set(t('v_nothingRepair'), 'heal');
       return;
     }
     this.word = corrected;
     const decoded = decode(this.word).nibble;
     if (decoded === this.nibble) {
-      this.info.set(`repaired position ${syndrome} — message intact`, 'heal');
+      this.info.set(t('v_repaired', syndrome), 'heal');
     } else {
-      this.info.set('two hits: the syndrome pointed at an innocent bit — silent corruption', 'rust');
+      this.info.set(t('v_twoHits'), 'rust');
     }
   }
 
@@ -103,9 +103,9 @@ export class Venn extends Figure {
   #report() {
     const flips = this.word.filter((b, i) => b !== this.sent[i]).length;
     const { syndrome } = decode(this.word);
-    if (flips === 0) this.info.set('pristine — all three circles agree', 'heal');
-    else if (syndrome === 0) this.info.set(`${flips} flips that cancel every parity — undetectable!`, 'rust');
-    else this.info.set(`${flips} bit${flips > 1 ? 's' : ''} flipped · broken circles point at position ${syndrome}${flips > 1 ? ' (wrongly — one flip is the limit)' : ''}`, flips > 1 ? 'rust' : '');
+    if (flips === 0) this.info.set(t('v_pristine'), 'heal');
+    else if (syndrome === 0) this.info.set(t('v_undetectable', flips), 'rust');
+    else this.info.set(t('v_flipped', flips, syndrome), flips > 1 ? 'rust' : '');
   }
 
   draw(ctx, w, h) {
@@ -126,7 +126,7 @@ export class Venn extends Figure {
         ctx.lineWidth = 2;
       } else {
         ctx.setLineDash([]);
-        ctx.strokeStyle = fade('#8a8371', 0.5);
+        ctx.strokeStyle = fade(C.faint, 0.5);
         ctx.lineWidth = 1.2;
       }
       ctx.stroke();
@@ -180,12 +180,9 @@ export class Venn extends Figure {
       ctx.textAlign = 'left';
       ctx.font = mono(11);
       ctx.fillStyle = syndrome === 0 ? C.heal : C.gold;
-      ctx.fillText(
-        `SYNDROME p₄p₂p₁ = ${sBits.replaceAll(' ', '')}  ${syndrome === 0 ? '· all clear' : `= ${syndrome} → position ${syndrome}`}`,
-        14, py,
-      );
+      ctx.fillText(t('v_narrowSyndrome', sBits.replaceAll(' ', ''), syndrome), 14, py);
       ctx.fillStyle = decStr === sentStr ? C.heal : C.rust;
-      ctx.fillText(`sent ${sentStr} · reads ${decStr} ${decStr === sentStr ? '✓' : '✗'}`, 14, py + 18);
+      ctx.fillText(t('v_narrowReads', sentStr, decStr, decStr === sentStr), 14, py + 18);
       return;
     }
 
@@ -194,18 +191,18 @@ export class Venn extends Figure {
     ctx.textAlign = 'left';
     ctx.font = mono(10);
     ctx.fillStyle = C.faint;
-    ctx.fillText('PARITY CHECKS', px, py);
+    ctx.fillText(t('v_parityChecks'), px, py);
     py += 22;
     for (const p of [4, 2, 1]) {
       ctx.font = mono(13);
       ctx.fillStyle = viol[p] ? C.rust : C.dim;
-      ctx.fillText(`${NAMES[p]}  ${viol[p] ? 'BROKEN' : 'holds'}  →  ${viol[p] ? 1 : 0}`, px, py);
+      ctx.fillText(`${NAMES[p]}  ${viol[p] ? t('v_broken') : t('v_holds')}  →  ${viol[p] ? 1 : 0}`, px, py);
       py += 20;
     }
     py += 8;
     ctx.font = mono(10);
     ctx.fillStyle = C.faint;
-    ctx.fillText('SYNDROME  (p₄ p₂ p₁)', px, py);
+    ctx.fillText(t('v_syndromeHdr'), px, py);
     py += 24;
     ctx.font = `600 22px ui-monospace, Menlo, monospace`;
     ctx.fillStyle = syndrome === 0 ? C.heal : C.gold;
@@ -213,13 +210,13 @@ export class Venn extends Figure {
     py += 22;
     ctx.font = mono(12);
     ctx.fillStyle = syndrome === 0 ? C.heal : C.gold;
-    ctx.fillText(syndrome === 0 ? '= 0 · all clear' : `= ${syndrome} · position ${syndrome}`, px, py);
+    ctx.fillText(syndrome === 0 ? t('v_allclear') : t('v_position', syndrome), px, py);
 
     py = h - 40;
     ctx.font = mono(12);
     ctx.fillStyle = C.faint;
-    ctx.fillText(`sent  d₁d₂d₃d₄ = ${sentStr}`, px, py);
+    ctx.fillText(t('v_sentLine', sentStr), px, py);
     ctx.fillStyle = decStr === sentStr ? C.heal : C.rust;
-    ctx.fillText(`reads          ${decStr} ${decStr === sentStr ? '✓' : '✗'}`, px, py + 18);
+    ctx.fillText(t('v_readsLine', decStr, decStr === sentStr), px, py + 18);
   }
 }

@@ -6,7 +6,7 @@ import { Venn } from './widgets/venn.js';
 import { Interleave } from './widgets/interleave.js';
 import { Polynomial } from './widgets/polynomial.js';
 import { Finale } from './widgets/finale.js';
-import { applyTheme, isLight } from './widgets/figure.js';
+import { applyTheme, isLight, getLang, setLang } from './widgets/figure.js';
 
 const REGISTRY = {
   hero: Hero,
@@ -22,21 +22,32 @@ const REGISTRY = {
 const params = new URLSearchParams(location.search);
 const demo = params.has('demo');
 
-for (const fig of document.querySelectorAll('[data-figure]')) {
-  const name = fig.dataset.figure;
-  const Widget = REGISTRY[name];
-  if (!Widget) continue;
-  const body = fig.querySelector('.fig-body');
-  try {
-    new Widget(body, { demo });
-  } catch (err) {
-    console.error(`figure "${name}" failed:`, err);
-    const msg = document.createElement('p');
-    msg.className = 'fig-note rust';
-    msg.textContent = 'this figure crashed — please file an issue.';
-    body.replaceChildren(msg);
+const CRASH_MSG = { tr: 'bu figür çöktü — lütfen bir issue açın.', en: 'this figure crashed — please file an issue.' };
+
+let instances = [];
+function buildFigures() {
+  // tear down any previous build so a language switch never leaks RAF loops
+  // or observers onto detached canvases
+  for (const inst of instances) { try { inst.destroy?.(); } catch (e) { /* ignore */ } }
+  instances = [];
+  for (const fig of document.querySelectorAll('[data-figure]')) {
+    const name = fig.dataset.figure;
+    const Widget = REGISTRY[name];
+    if (!Widget) continue;
+    const body = fig.querySelector('.fig-body');
+    body.replaceChildren(); // drop the old canvas + control bars
+    try {
+      instances.push(new Widget(body, { demo }));
+    } catch (err) {
+      console.error(`figure "${name}" failed:`, err);
+      const msg = document.createElement('p');
+      msg.className = 'fig-note rust';
+      msg.textContent = CRASH_MSG[getLang()] || CRASH_MSG.en;
+      body.replaceChildren(msg);
+    }
   }
 }
+buildFigures();
 
 // demo mode strips the chrome so the GIF is pure hero
 if (demo) {
@@ -61,5 +72,27 @@ if (themeBtn) {
       else { document.documentElement.setAttribute('data-theme', next); localStorage.setItem('theme', next); }
     } catch (e) { document.documentElement.setAttribute('data-theme', next); }
     applyTheme();
+  });
+}
+
+// language toggle: flip TR/EN, persist the choice, and rebuild every figure so
+// its canvas text and DOM controls come back in the chosen language
+const langBtn = document.getElementById('langBtn');
+function paintLangBtn() {
+  if (!langBtn) return;
+  const next = getLang() === 'tr' ? 'en' : 'tr';
+  langBtn.textContent = next.toUpperCase();
+  langBtn.setAttribute('aria-label', next === 'tr' ? 'Türkçe sürüm' : 'English version');
+}
+paintLangBtn();
+if (langBtn) {
+  langBtn.addEventListener('click', () => {
+    const next = getLang() === 'tr' ? 'en' : 'tr';
+    setLang(next);
+    try { localStorage.setItem('lang', next); } catch (e) { /* storage blocked */ }
+    document.documentElement.setAttribute('data-lang', next);
+    document.documentElement.lang = next;
+    paintLangBtn();
+    buildFigures();
   });
 }

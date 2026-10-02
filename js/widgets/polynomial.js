@@ -4,7 +4,7 @@
 // survivors rebuild the same curve exactly. Fewer, and the curve dissolves
 // into a fan of maybes.
 
-import { Figure, C, mono, fade, uiBar, button, note, spacer } from './figure.js';
+import { Figure, C, mono, fade, uiBar, button, note, spacer, t } from './figure.js';
 import { RS } from '../rs.js';
 import { mulberry32 } from '../prng.js';
 
@@ -24,7 +24,7 @@ export class Polynomial extends Figure {
     const bar = uiBar(mount);
     this.info = note(bar, '');
     spacer(bar);
-    button(bar, 'restore all points', () => {
+    button(bar, t('p_restore'), () => {
       this.dead.clear();
       this.#report();
     });
@@ -34,7 +34,7 @@ export class Polynomial extends Figure {
     const rs = new RS(5);
     const cw = rs.encode([72, 105]); // "Hi"
     const bytesLine = note(uiBar(mount), '');
-    bytesLine.set(`same trick in GF(256): “Hi” = [72 105] → sent as [${[...cw].join(' ')}] — any 2 of these 7 bytes rebuild the message`);
+    bytesLine.set(t('p_gf256', [...cw].join(' ')));
     this.#report();
   }
 
@@ -73,10 +73,10 @@ export class Polynomial extends Figure {
     const alive = this.#survivors().length;
     if (alive >= K) {
       this.fan = null;
-      this.info.set(`7 sent · ${this.dead.size} destroyed · ${alive} remain ≥ 3 — the curve is fully recovered`, this.dead.size ? 'heal' : '');
+      this.info.set(t('p_recovered', this.dead.size, alive), this.dead.size ? 'heal' : '');
     } else {
       this.#rollFan();
-      this.info.set(`only ${alive} point${alive === 1 ? '' : 's'} left — infinitely many parabolas fit · the message is gone`, 'rust');
+      this.info.set(t('p_gone', alive), 'rust');
     }
   }
 
@@ -156,12 +156,12 @@ export class Polynomial extends Figure {
     ctx.fillRect(0, 0, w, h);
 
     // axes + grid
-    ctx.strokeStyle = fade('#8a8371', 0.12);
+    ctx.strokeStyle = fade(C.faint, 0.12);
     ctx.beginPath();
     for (let gx = 0; gx <= 8; gx++) { ctx.moveTo(M.X(gx), M.y1); ctx.lineTo(M.X(gx), M.y0); }
     for (let gy = -2; gy <= 10; gy += 2) { ctx.moveTo(M.x0, M.Y(gy)); ctx.lineTo(M.x1, M.Y(gy)); }
     ctx.stroke();
-    ctx.strokeStyle = fade('#8a8371', 0.35);
+    ctx.strokeStyle = fade(C.faint, 0.35);
     ctx.beginPath();
     ctx.moveTo(M.x0, M.Y(0)); ctx.lineTo(M.x1, M.Y(0));
     ctx.stroke();
@@ -232,10 +232,10 @@ export class Polynomial extends Figure {
     ctx.textAlign = 'left';
     ctx.fillStyle = C.faint;
     if (w < 660) {
-      ctx.fillText('● GOLD = THE MESSAGE (DRAG UP/DOWN) · ○ WHITE = SPARES', M.x0, 16);
-      ctx.fillText('CLICK ANY POINT TO DESTROY / REVIVE', M.x0, 30);
+      ctx.fillText(t('p_legendShort1'), M.x0, 16);
+      ctx.fillText(t('p_legendShort2'), M.x0, 30);
     } else {
-      ctx.fillText('● GOLD = THE MESSAGE (DRAG UP/DOWN) · ○ WHITE = SPARES · CLICK ANY POINT TO DESTROY / REVIVE', M.x0, 16);
+      ctx.fillText(t('p_legendWide'), M.x0, 16);
     }
   }
 }

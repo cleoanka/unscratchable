@@ -12,24 +12,29 @@
 <meta property="og:image" content="https://cleoanka.github.io/unscratchable/assets/social.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://cleoanka.github.io/unscratchable/">
-<link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23100f0d'/%3E%3Cpath d='M6 24 L24 7' stroke='%23e0533d' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M8 26 L26 9' stroke='%233ddc84' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f1115'/%3E%3Cpath d='M6 24 L24 7' stroke='%23fb7185' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M8 26 L26 9' stroke='%2334d399' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<meta name="theme-color" content="#100f0d" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f1e7" media="(prefers-color-scheme: light)">
-<script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('theme')}catch(e){}if(t==='dark'||t==='light')d.setAttribute('data-theme',t);if(t?t==='dark':!matchMedia('(prefers-color-scheme: light)').matches)d.classList.add('is-dark')})();</script>
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fcfcfc" media="(prefers-color-scheme: light)">
+<script>(function(){var d=document.documentElement,t=null,l=null;try{t=localStorage.getItem('theme')}catch(e){}if(t==='dark'||t==='light')d.setAttribute('data-theme',t);if(t?t==='dark':!matchMedia('(prefers-color-scheme: light)').matches)d.classList.add('is-dark');try{l=localStorage.getItem('lang')}catch(e){}if(l!=='tr'&&l!=='en')l=(navigator.language||'').toLowerCase().indexOf('tr')===0?'tr':'en';d.setAttribute('data-lang',l);d.lang=l})();</script>
 <link rel="stylesheet" href="css/essay.css">
 </head>
 <body>
-<a class="skip" href="#ch0">skip to the demonstration</a>
+<a class="skip" href="#ch0"><span lang="tr">gösterime atla</span><span lang="en">skip to the demonstration</span></a>
+<button class="lang-toggle" id="langBtn" type="button" aria-label="English version">EN</button>
 <button class="theme-toggle" id="themeBtn" type="button" aria-label="Switch between light and dark theme"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
 
 <header class="masthead">
-  <p class="kicker">an interactive essay</p>
+  <p class="kicker"><span lang="tr">etkileşimli bir deneme</span><span lang="en">an interactive essay</span></p>
   <h1>unscratchable</h1>
-  <p class="subtitle">Scratch this message. It heals. This is the mathematics that lets data survive our world.</p>
-  <p class="byline">CANVAS &amp; CODE, NO DEPENDENCIES · <a href="https://github.com/cleoanka/unscratchable">SOURCE ON GITHUB</a></p>
-  <noscript><p class="fig-note">The figures need JavaScript — the essay is interactive all the way down. The text below still reads fine.</p></noscript>
+  <p class="subtitle"><span lang="tr">Bu mesajı çiz. İyileşiyor. Verinin dünyamızda hayatta kalmasını sağlayan matematik bu.</span><span lang="en">Scratch this message. It heals. This is the mathematics that lets data survive our world.</span></p>
+  <p class="byline" lang="tr">CANVAS &amp; KOD, BAĞIMLILIK YOK · <a href="https://github.com/cleoanka/unscratchable">GITHUB’DA KAYNAK</a></p>
+  <p class="byline" lang="en">CANVAS &amp; CODE, NO DEPENDENCIES · <a href="https://github.com/cleoanka/unscratchable">SOURCE ON GITHUB</a></p>
+  <noscript>
+    <p class="fig-note" lang="tr">Figürler JavaScript gerektirir — deneme en altına kadar etkileşimlidir. Aşağıdaki metin yine de rahatça okunur.</p>
+    <p class="fig-note" lang="en">The figures need JavaScript — the essay is interactive all the way down. The text below still reads fine.</p>
+  </noscript>
   <hr class="rule">
 </header>
 
@@ -37,127 +42,175 @@
   <div class="essay">
 
     <section class="chapter" id="ch0">
-      <div class="chapter-head"><span class="no">0</span><h2>The unscratchable message</h2></div>
-      <p>Below is a message stored the way a compact disc, a QR code, or a deep-space probe would store it. Take the brush and gouge it. Scribble hard. When you let go, watch what the mathematics does.</p>
+      <div class="chapter-head"><span class="no">0</span><h2><span lang="tr">Çizilemez mesaj</span><span lang="en">The unscratchable message</span></h2></div>
+      <p lang="tr">Aşağıda, bir kompakt diskin, bir QR kodun ya da derin uzay sondasının saklayacağı gibi saklanmış bir mesaj var. Fırçayı al ve onu oy. Sertçe karala. Bıraktığında, matematiğin ne yaptığını izle.</p>
+      <p lang="en">Below is a message stored the way a compact disc, a QR code, or a deep-space probe would store it. Take the brush and gouge it. Scribble hard. When you let go, watch what the mathematics does.</p>
 
       <figure class="fig" aria-label="Interactive: scratch the stored message with your pointer and watch Reed–Solomon decoding restore it" data-figure="hero">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 0</span> — The canvas is a literal view of storage: every cell is drawn from stored bytes, the brush overwrites real bytes with garbage, and healing runs a real Reed–Solomon decoder in your browser. Nothing here is faked. Push it too far — the armor is finite, and the failure is as honest as the healing.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 0</span> — Tuval, deponun birebir görünümüdür: her hücre saklanan baytlardan çizilir, fırça gerçek baytların üzerine çöp yazar ve iyileşme tarayıcında gerçek bir Reed–Solomon çözücüsü çalıştırır. Burada hiçbir şey sahte değil. Fazla zorlarsan — zırh sonludur ve başarısızlık, iyileşme kadar dürüsttür.</span>
+          <span lang="en"><span class="fig-no">FIG. 0</span> — The canvas is a literal view of storage: every cell is drawn from stored bytes, the brush overwrites real bytes with garbage, and healing runs a real Reed–Solomon decoder in your browser. Nothing here is faked. Push it too far — the armor is finite, and the failure is as honest as the healing.</span>
+        </figcaption>
       </figure>
 
-      <p>The decoder was shown nothing but the survivors. The bytes you destroyed were <em>gone</em>, and what remained held enough structure to name every missing byte and compute every one of their values back into existence. That golden strip at the bottom is not a backup — it is something far stranger, and by the end of this essay you will know exactly how it works. <span class="aside" style="display:inline">(The page does keep the original in memory — but only to catch the decoder ever lying, and to serve the reset button. It is never consulted to heal.)</span></p>
-      <p class="aside">One honest disclosure up front: the surface tells the decoder <em>where</em> it was scratched — the way a CD player knows which frames came back illegible. Damage with known addresses is called an <em>erasure</em>. Silent corruption, where the decoder must find the damage first, costs exactly twice as much to fix. Chapter 7 lets you feel that factor of two.</p>
+      <p lang="tr">Çözücüye hayatta kalanlardan başka hiçbir şey gösterilmedi. Yok ettiğin baytlar <em>gitmişti</em> ve geriye kalan, eksik her baytı adlandırmaya ve değerlerinin her birini yeniden var etmeye yetecek kadar yapı taşıyordu. Alttaki o altın şerit bir yedek değil — çok daha tuhaf bir şey; bu denemenin sonunda nasıl çalıştığını tam olarak bileceksin. <span class="aside" style="display:inline">(Sayfa aslıyı bellekte tutar — ama yalnızca çözücüyü yalan söylerken yakalamak ve sıfırlama düğmesine hizmet etmek için. İyileşmek için ona asla başvurulmaz.)</span></p>
+      <p lang="en">The decoder was shown nothing but the survivors. The bytes you destroyed were <em>gone</em>, and what remained held enough structure to name every missing byte and compute every one of their values back into existence. That golden strip at the bottom is not a backup — it is something far stranger, and by the end of this essay you will know exactly how it works. <span class="aside" style="display:inline">(The page does keep the original in memory — but only to catch the decoder ever lying, and to serve the reset button. It is never consulted to heal.)</span></p>
+      <p class="aside" lang="tr">Baştan dürüst bir açıklama: yüzey, çözücüye nerede çizildiğini söyler — tıpkı bir CD çaların hangi çerçevelerin okunamaz döndüğünü bilmesi gibi. Adresi bilinen hasara <em>silinti</em> denir. Çözücünün hasarı önce bulması gereken sessiz bozulmayı onarmak tam iki kat pahalıdır. 7. bölüm bu iki katı hissettirir.</p>
+      <p class="aside" lang="en">One honest disclosure up front: the surface tells the decoder <em>where</em> it was scratched — the way a CD player knows which frames came back illegible. Damage with known addresses is called an <em>erasure</em>. Silent corruption, where the decoder must find the damage first, costs exactly twice as much to fix. Chapter 7 lets you feel that factor of two.</p>
     </section>
 
     <section class="chapter" id="ch1">
-      <div class="chapter-head"><span class="no">1</span><h2>A world that flips bits</h2></div>
-      <p>Every medium betrays you. Cosmic rays flip bits in RAM; scratches blind lasers; thermal noise whispers over every wire ever made. The physical world does not have a clean channel to offer — only noisy ones. Here is a five-letter word crossing such a channel. Each bit survives only with probability 1&nbsp;−&nbsp;p.</p>
+      <div class="chapter-head"><span class="no">1</span><h2><span lang="tr">Bit çeviren bir dünya</span><span lang="en">A world that flips bits</span></h2></div>
+      <p lang="tr">Her ortam seni ele verir. Kozmik ışınlar RAM’de bit çevirir; çizikler lazerleri kör eder; termal gürültü yapılmış her telin üzerinde fısıldar. Fiziksel dünyanın sunacak temiz bir kanalı yok — yalnızca gürültülü olanları var. İşte böyle bir kanalı geçen beş harfli bir sözcük. Her bit yalnızca 1&nbsp;−&nbsp;p olasılıkla hayatta kalır.</p>
+      <p lang="en">Every medium betrays you. Cosmic rays flip bits in RAM; scratches blind lasers; thermal noise whispers over every wire ever made. The physical world does not have a clean channel to offer — only noisy ones. Here is a five-letter word crossing such a channel. Each bit survives only with probability 1&nbsp;−&nbsp;p.</p>
 
       <figure class="fig" aria-label="Interactive: a word crosses a noisy channel; slide the noise level, click bits to flip them" data-figure="channel">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 1</span> — “HELLO”, one bit at a time. Slide the noise up. Click any bit to flip it yourself and watch what one wrong bit does to a letter.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 1</span> — “HELLO”, bitine bir. Gürültüyü yukarı kaydır. Herhangi bir bite tıklayıp kendin çevir ve tek bir yanlış bitin bir harfe ne yaptığını izle.</span>
+          <span lang="en"><span class="fig-no">FIG. 1</span> — “HELLO”, one bit at a time. Slide the noise up. Click any bit to flip it yourself and watch what one wrong bit does to a letter.</span>
+        </figcaption>
       </figure>
 
-      <p>Even at 2% noise — a channel far better than a scratched disc — a 40-bit message arrives intact less than half the time. Sending raw data through the world is not engineering. It is prayer.</p>
+      <p lang="tr">%2 gürültüde bile — çizik bir diskten çok daha iyi bir kanal — 40 bitlik bir mesaj zamanın yarısından azında sağlam ulaşır. Ham veriyi dünyanın içinden göndermek mühendislik değildir. Duadır.</p>
+      <p lang="en">Even at 2% noise — a channel far better than a scratched disc — a 40-bit message arrives intact less than half the time. Sending raw data through the world is not engineering. It is prayer.</p>
     </section>
 
     <section class="chapter" id="ch2">
-      <div class="chapter-head"><span class="no">2</span><h2>Say everything three times</h2></div>
-      <p>The obvious fix is the one every human already knows: repeat yourself. Send each bit three times and let the majority speak. This genuinely works — it is the first error-correcting code, and it already contains the whole subject in miniature. It also has two ugly problems.</p>
+      <div class="chapter-head"><span class="no">2</span><h2><span lang="tr">Her şeyi üç kez söyle</span><span lang="en">Say everything three times</span></h2></div>
+      <p lang="tr">Besbelli çözüm, her insanın zaten bildiği şey: kendini tekrarla. Her biti üç kez gönder ve çoğunluk konuşsun. Bu gerçekten işe yarar — ilk hata düzelten koddur ve tüm konuyu minyatür hâlinde zaten içerir. Ama iki çirkin sorunu da var.</p>
+      <p lang="en">The obvious fix is the one every human already knows: repeat yourself. Send each bit three times and let the majority speak. This genuinely works — it is the first error-correcting code, and it already contains the whole subject in miniature. It also has two ugly problems.</p>
 
       <figure class="fig" aria-label="Interactive: repetition code with majority vote; choose 1, 3 or 5 copies and set the noise" data-figure="repetition">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 2</span> — Each column is one bit, sent R times. The vote sits below. Click copies to flip them by hand — at three copies, two hits on the same triple and the majority lies to you.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 2</span> — Her sütun bir bittir, R kez gönderilir. Oy aşağıda durur. Kopyaları elle çevirmek için tıkla — üç kopyada, aynı üçlüye iki darbe ve çoğunluk sana yalan söyler.</span>
+          <span lang="en"><span class="fig-no">FIG. 2</span> — Each column is one bit, sent R times. The vote sits below. Click copies to flip them by hand — at three copies, two hits on the same triple and the majority lies to you.</span>
+        </figcaption>
       </figure>
 
-      <p>Problem one is the price: tripling every bit buys you a disk that is one-third useful. Problem two is subtler and worse: repetition spends its redundancy stupidly. It protects each bit in isolation, learning nothing from the other bits, so two unlucky hits on the same triple still get through. Three-quarters of a century of coding theory is, at heart, one question: <strong>can redundancy be spent on the message as a whole, instead of on each bit alone?</strong></p>
+      <p lang="tr">Birinci sorun bedeldir: her biti üçe katlamak sana üçte biri işe yarayan bir disk kazandırır. İkinci sorun daha incelikli ve daha kötü: tekrar, fazlalığını aptalca harcar. Her biti tek başına korur, diğer bitlerden hiçbir şey öğrenmez; böylece aynı üçlüye gelen iki talihsiz darbe yine de geçer. Kodlama kuramının dörtte üç yüzyılı, özünde tek bir sorudur: <strong>fazlalık, her bit için ayrı ayrı yerine mesajın bütününe harcanabilir mi?</strong></p>
+      <p lang="en">Problem one is the price: tripling every bit buys you a disk that is one-third useful. Problem two is subtler and worse: repetition spends its redundancy stupidly. It protects each bit in isolation, learning nothing from the other bits, so two unlucky hits on the same triple still get through. Three-quarters of a century of coding theory is, at heart, one question: <strong>can redundancy be spent on the message as a whole, instead of on each bit alone?</strong></p>
     </section>
 
     <section class="chapter" id="ch3">
-      <div class="chapter-head"><span class="no">3</span><h2>Distance is safety</h2></div>
-      <p>To spend redundancy wisely, you first need to see what it buys. Picture every possible 3-bit string as a corner of a cube, where crossing one edge flips one bit. Now choose your <em>codewords</em> — the strings you actually allow yourself to send — to be 000 and 111: the repetition code again, seen with new eyes.</p>
+      <div class="chapter-head"><span class="no">3</span><h2><span lang="tr">Mesafe güvenliktir</span><span lang="en">Distance is safety</span></h2></div>
+      <p lang="tr">Fazlalığı akıllıca harcamak için önce onun ne satın aldığını görmen gerekir. Olası her 3 bitlik diziyi bir küpün köşesi olarak düşün; bir kenarı geçmek bir biti çevirir. Şimdi <em>kod sözcüklerini</em> — gerçekten göndermene izin verdiğin dizileri — 000 ve 111 seç: tekrar kodu, yeniden, yeni gözlerle.</p>
+      <p lang="en">To spend redundancy wisely, you first need to see what it buys. Picture every possible 3-bit string as a corner of a cube, where crossing one edge flips one bit. Now choose your <em>codewords</em> — the strings you actually allow yourself to send — to be 000 and 111: the repetition code again, seen with new eyes.</p>
 
       <figure class="fig" aria-label="Interactive: rotatable cube of 3-bit strings showing codewords 000 and 111 and their decoding spheres" data-figure="cube">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 3</span> — The eight 3-bit strings. Gold-ringed corners are codewords. Click any corner to see where it decodes; turn on the spheres to see the deeper fact.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 3</span> — Sekiz adet 3 bitlik dizi. Altın halkalı köşeler kod sözcükleridir. Nereye çözüldüğünü görmek için herhangi bir köşeye tıkla; daha derin gerçeği görmek için küreleri aç.</span>
+          <span lang="en"><span class="fig-no">FIG. 3</span> — The eight 3-bit strings. Gold-ringed corners are codewords. Click any corner to see where it decodes; turn on the spheres to see the deeper fact.</span>
+        </figcaption>
       </figure>
 
-      <p>The two codewords sit at <em>Hamming distance</em> 3 — you must flip three bits to turn one into the other. That gap is the entire secret. One flip leaves you still nearer the truth than the lie, so the nearest codeword is the right one. And notice something almost too neat: the two decoding spheres tile the cube exactly, every corner claimed by exactly one codeword, no gaps, no overlaps. Codes this efficient are called <em>perfect</em>, and they are vanishingly rare. You are about to meet the most famous one.</p>
+      <p lang="tr">İki kod sözcüğü <em>Hamming mesafesi</em> 3’te durur — birini diğerine çevirmek için üç bit çevirmen gerekir. O boşluk, sırrın tamamıdır. Tek bir çevirme seni hâlâ yalandan çok gerçeğe yakın bırakır; dolayısıyla en yakın kod sözcüğü doğru olandır. Ve neredeyse fazlaca zarif bir şeyi fark et: iki çözme küresi küpü tam olarak döşer, her köşe tam olarak bir kod sözcüğüne aittir, boşluk yok, örtüşme yok. Bu kadar verimli kodlara <em>kusursuz</em> denir ve yok denecek kadar nadirdirler. Birazdan en ünlüsüyle tanışacaksın.</p>
+      <p lang="en">The two codewords sit at <em>Hamming distance</em> 3 — you must flip three bits to turn one into the other. That gap is the entire secret. One flip leaves you still nearer the truth than the lie, so the nearest codeword is the right one. And notice something almost too neat: the two decoding spheres tile the cube exactly, every corner claimed by exactly one codeword, no gaps, no overlaps. Codes this efficient are called <em>perfect</em>, and they are vanishingly rare. You are about to meet the most famous one.</p>
     </section>
 
     <section class="chapter" id="ch4">
-      <div class="chapter-head"><span class="no">4</span><h2>Seven bits, one confession</h2></div>
-      <p>In 1950, Richard Hamming — tired of weekends lost to a computer that halted at every parity error — found a way to make redundancy <em>overlap</em>. Take four data bits. Add three parity bits, each one watching a different, deliberately overlapping crew of four positions. Seven bits total, drawn here as three circles.</p>
+      <div class="chapter-head"><span class="no">4</span><h2><span lang="tr">Yedi bit, tek itiraf</span><span lang="en">Seven bits, one confession</span></h2></div>
+      <p lang="tr">1950’de Richard Hamming — her parite hatasında duran bir bilgisayara kurban giden hafta sonlarından bıkmış hâlde — fazlalığı <em>örtüştürmenin</em> bir yolunu buldu. Dört veri biti al. Üç parite biti ekle; her biri, kasıtlı olarak örtüşen farklı bir dörtlü konum ekibini gözetir. Toplam yedi bit, burada üç daire olarak çizildi.</p>
+      <p lang="en">In 1950, Richard Hamming — tired of weekends lost to a computer that halted at every parity error — found a way to make redundancy <em>overlap</em>. Take four data bits. Add three parity bits, each one watching a different, deliberately overlapping crew of four positions. Seven bits total, drawn here as three circles.</p>
 
       <figure class="fig" aria-label="Interactive: Hamming(7,4) as three overlapping parity circles; click bits to flip them and read the syndrome" data-figure="venn">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 4</span> — Hamming(7,4). Click any bit — data or parity — to flip it in transit. The broken circles intersect at exactly one region: the culprit. Flip two and watch the code confidently accuse the wrong bit; every code has a budget, and honesty about the budget is part of the design.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 4</span> — Hamming(7,4). Herhangi bir bite — veri ya da parite — tıklayıp aktarımda çevir. Kırık daireler tam olarak tek bir bölgede kesişir: suçlu. İki tane çevir ve kodun özgüvenle yanlış biti suçlamasını izle; her kodun bir bütçesi vardır ve bütçe konusunda dürüstlük tasarımın parçasıdır.</span>
+          <span lang="en"><span class="fig-no">FIG. 4</span> — Hamming(7,4). Click any bit — data or parity — to flip it in transit. The broken circles intersect at exactly one region: the culprit. Flip two and watch the code confidently accuse the wrong bit; every code has a budget, and honesty about the budget is part of the design.</span>
+        </figcaption>
       </figure>
 
-      <p>Flip any single bit and the three parity checks do not merely complain — they <em>testify</em>. Read the broken checks as a binary number and it spells out the position of the flipped bit: the error is made to confess its own address. Note what happened to the price, too: repetition needed 200% overhead to fix one error; Hamming does it for 75%. And this is another perfect code — sixteen codewords whose radius-1 spheres tile all 128 corners of the 7-cube exactly.</p>
-      <p class="aside">The syndrome trick is not a coincidence of small numbers. Hamming placed the parity bits at positions 1, 2, 4 — the powers of two — so that “which checks broke” and “binary address of the error” become the same thing. It is one of the most elegant address buses ever built, and it is made of nothing.</p>
+      <p lang="tr">Tek bir biti çevir; üç parite kontrolü yalnızca şikâyet etmez — <em>tanıklık eder</em>. Kırık kontrolleri ikilik bir sayı olarak oku; çevrilen bitin konumunu hecelerler: hata, kendi adresini itiraf ettirilir. Bedele ne olduğuna da dikkat et: tekrar tek bir hatayı düzeltmek için %200 ek yük istiyordu; Hamming bunu %75’e yapar. Ve bu da bir başka kusursuz koddur — yarıçapı 1 olan küreleri 7-küpün 128 köşesinin tamamını tam döşeyen on altı kod sözcüğü.</p>
+      <p lang="en">Flip any single bit and the three parity checks do not merely complain — they <em>testify</em>. Read the broken checks as a binary number and it spells out the position of the flipped bit: the error is made to confess its own address. Note what happened to the price, too: repetition needed 200% overhead to fix one error; Hamming does it for 75%. And this is another perfect code — sixteen codewords whose radius-1 spheres tile all 128 corners of the 7-cube exactly.</p>
+      <p class="aside" lang="tr">Sendrom numarası küçük sayıların rastlantısı değildir. Hamming parite bitlerini 1, 2, 4 konumlarına — ikinin kuvvetlerine — yerleştirdi; böylece “hangi kontroller kırıldı” ile “hatanın ikilik adresi” aynı şey hâline gelir. Yapılmış en zarif adres yollarından biridir ve hiçbir şeyden ibarettir.</p>
+      <p class="aside" lang="en">The syndrome trick is not a coincidence of small numbers. Hamming placed the parity bits at positions 1, 2, 4 — the powers of two — so that “which checks broke” and “binary address of the error” become the same thing. It is one of the most elegant address buses ever built, and it is made of nothing.</p>
     </section>
 
     <section class="chapter" id="ch5">
-      <div class="chapter-head"><span class="no">5</span><h2>The scratch problem</h2></div>
-      <p>Hamming armors you against a random, lonely bit-flip. But look at the damage the real world actually deals: a scratch, a scuff, a burst of interference. Real damage arrives in <em>runs</em> — and a run of damage lands on one codeword like a fist, blowing straight through any per-word budget. The fix costs nothing but cleverness: don’t store codewords side by side. Shuffle them.</p>
+      <div class="chapter-head"><span class="no">5</span><h2><span lang="tr">Çizik sorunu</span><span lang="en">The scratch problem</span></h2></div>
+      <p lang="tr">Hamming seni rastgele, yalnız bir bit çevrilmesine karşı zırhlandırır. Ama gerçek dünyanın aslında verdiği hasara bak: bir çizik, bir sürtük, bir parazit patlaması. Gerçek hasar <em>diziler</em> hâlinde gelir — ve bir hasar dizisi tek bir kod sözcüğüne yumruk gibi iner, sözcük başı her bütçeyi delip geçer. Çözüm, zekâdan başka hiçbir şeye mal olmaz: kod sözcüklerini yan yana saklama. Onları karıştır.</p>
+      <p lang="en">Hamming armors you against a random, lonely bit-flip. But look at the damage the real world actually deals: a scratch, a scuff, a burst of interference. Real damage arrives in <em>runs</em> — and a run of damage lands on one codeword like a fist, blowing straight through any per-word budget. The fix costs nothing but cleverness: don’t store codewords side by side. Shuffle them.</p>
 
       <figure class="fig" aria-label="Interactive: drag a scratch over sequential versus interleaved block layouts and compare survival" data-figure="interleave">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 5</span> — The same four codewords, written two ways, wounded by the same scratch. Drag it; widen it. Interleaving turns one fatal wound into four survivable ones.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 5</span> — Aynı dört kod sözcüğü, iki biçimde yazıldı, aynı çizikle yaralandı. Sürükle; genişlet. Harmanlama, ölümcül tek bir yarayı, atlatılabilir dört yaraya çevirir.</span>
+          <span lang="en"><span class="fig-no">FIG. 5</span> — The same four codewords, written two ways, wounded by the same scratch. Drag it; widen it. Interleaving turns one fatal wound into four survivable ones.</span>
+        </figcaption>
       </figure>
 
-      <p>Interleaving is why a CD shrugs off a 2.5-millimeter gouge: its data is braided so that neighboring bytes on the disc belong to distant codewords. The scratch is not prevented. It is <em>diluted</em> — converted from the error pattern codes fear most into the one they handle best. The hero at the top of this page is braided the same way, which is why your wildest scribble was spread thin across many blocks.</p>
+      <p lang="tr">Harmanlama, bir CD’nin 2,5 milimetrelik bir oyuğu neden umursamadığının sebebidir: verisi öyle örülür ki diskteki komşu baytlar uzak kod sözcüklerine aittir. Çizik engellenmez. <em>Seyreltilir</em> — kodların en çok korktuğu hata deseninden, en iyi başa çıktıkları desene dönüştürülür. Bu sayfanın başındaki ana figür de aynı şekilde örülüdür; en çılgın karalaman bu yüzden birçok bloğa ince ince yayıldı.</p>
+      <p lang="en">Interleaving is why a CD shrugs off a 2.5-millimeter gouge: its data is braided so that neighboring bytes on the disc belong to distant codewords. The scratch is not prevented. It is <em>diluted</em> — converted from the error pattern codes fear most into the one they handle best. The hero at the top of this page is braided the same way, which is why your wildest scribble was spread thin across many blocks.</p>
     </section>
 
     <section class="chapter" id="ch6">
-      <div class="chapter-head"><span class="no">6</span><h2>Any k points</h2></div>
-      <p>One idea remains, and it is the crown jewel. Hamming protects bits; scratches destroy whole bytes. For that we jump from bits to curves. Here is the fact everyone meets in school, wearing its true face at last: <strong>three points determine a parabola — any three.</strong></p>
+      <div class="chapter-head"><span class="no">6</span><h2><span lang="tr">Herhangi k nokta</span><span lang="en">Any k points</span></h2></div>
+      <p lang="tr">Geriye tek bir fikir kalır ve o da taçtaki mücevherdir. Hamming bitleri korur; çizikler ise bütün baytları yok eder. Bunun için bitlerden eğrilere sıçrarız. İşte herkesin okulda karşılaştığı, nihayet gerçek yüzüyle beliren olgu: <strong>üç nokta bir parabolü belirler — herhangi üç nokta.</strong></p>
+      <p lang="en">One idea remains, and it is the crown jewel. Hamming protects bits; scratches destroy whole bytes. For that we jump from bits to curves. Here is the fact everyone meets in school, wearing its true face at last: <strong>three points determine a parabola — any three.</strong></p>
 
       <figure class="fig" aria-label="Interactive: three draggable message points define a parabola sampled at seven places; destroy points and recover the curve" data-figure="polynomial">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 6</span> — The three gold points are the message (three distinct x’s, of course). Sampling the parabola at seven places mails four spares along for free. Destroy any four points — <em>any</em> four — and the survivors rebuild the curve exactly. Destroy a fifth and it dissolves into maybes.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 6</span> — Üç altın nokta mesajdır (elbette üç farklı x). Parabolü yedi yerde örneklemek, dört yedeği bedavaya yollar. Herhangi dört noktayı yok et — <em>herhangi</em> dördünü — ve hayatta kalanlar eğriyi tam olarak yeniden kurar. Beşincisini yok et ve eğri belki’lere dağılır.</span>
+          <span lang="en"><span class="fig-no">FIG. 6</span> — The three gold points are the message (three distinct x’s, of course). Sampling the parabola at seven places mails four spares along for free. Destroy any four points — <em>any</em> four — and the survivors rebuild the curve exactly. Destroy a fifth and it dissolves into maybes.</span>
+        </figcaption>
       </figure>
 
-      <p>That is the entire idea of Reed–Solomon codes, published by Irving Reed and Gustave Solomon in 1960 on five quiet pages. Treat your k message bytes as the coefficients of a polynomial. Evaluate it at n&nbsp;&gt;&nbsp;k points and send those. Any k survivors pin the polynomial back down; the other n&nbsp;−&nbsp;k are pure, interchangeable spares. There is one catch — drawing curves through bytes requires an arithmetic where bytes divide cleanly, no rounding, no infinities. Such an arithmetic exists: the finite field GF(256), where addition is XOR and every one of the 255 nonzero bytes has an exact reciprocal. The line under the figure is not an analogy — those are real bytes, computed by the same encoder that armors the hero. <span class="aside" style="display:inline">(In practice, this page included, the code is built in its equivalent <em>systematic</em> form — parity from a generator polynomial, message riding untouched in front — but the any-k-survivors guarantee is the same theorem wearing work clothes.)</span></p>
+      <p lang="tr">Reed–Solomon kodlarının fikrinin tamamı budur; Irving Reed ve Gustave Solomon tarafından 1960’ta beş sessiz sayfada yayımlandı. k mesaj baytını bir polinomun katsayıları olarak ele al. Onu n&nbsp;&gt;&nbsp;k noktada değerlendir ve bunları gönder. Herhangi k hayatta kalan polinomu yeniden sabitler; diğer n&nbsp;−&nbsp;k tanesi saf, birbirinin yerine geçebilen yedeklerdir. Tek bir pürüz var — baytların içinden eğri çizmek, baytların temiz bölündüğü, yuvarlamanın ve sonsuzlukların olmadığı bir aritmetik gerektirir. Böyle bir aritmetik var: sonlu cisim GF(256); toplama XOR’dur ve sıfır olmayan 255 baytın her birinin tam bir tersi vardır. Figürün altındaki satır bir benzetme değil — bunlar gerçek baytlar, ana figürü zırhlayan aynı kodlayıcı tarafından hesaplandı. <span class="aside" style="display:inline">(Pratikte, bu sayfa dâhil, kod eşdeğer <em>sistematik</em> biçiminde kurulur — parite bir üreteç polinomundan, mesaj önde dokunulmadan gider — ama herhangi-k-hayatta-kalan güvencesi, iş tulumu giymiş aynı teoremdir.)</span></p>
+      <p lang="en">That is the entire idea of Reed–Solomon codes, published by Irving Reed and Gustave Solomon in 1960 on five quiet pages. Treat your k message bytes as the coefficients of a polynomial. Evaluate it at n&nbsp;&gt;&nbsp;k points and send those. Any k survivors pin the polynomial back down; the other n&nbsp;−&nbsp;k are pure, interchangeable spares. There is one catch — drawing curves through bytes requires an arithmetic where bytes divide cleanly, no rounding, no infinities. Such an arithmetic exists: the finite field GF(256), where addition is XOR and every one of the 255 nonzero bytes has an exact reciprocal. The line under the figure is not an analogy — those are real bytes, computed by the same encoder that armors the hero. <span class="aside" style="display:inline">(In practice, this page included, the code is built in its equivalent <em>systematic</em> form — parity from a generator polynomial, message riding untouched in front — but the any-k-survivors guarantee is the same theorem wearing work clothes.)</span></p>
     </section>
 
     <section class="chapter" id="ch7">
-      <div class="chapter-head"><span class="no">7</span><h2>The healing machine</h2></div>
-      <p>Now you own every part of the machine from the first scribble: bytes become polynomial evaluations over GF(256) <em>(chapter 6)</em>, blocks are braided against bursts <em>(5)</em>, damage with a known address costs one spare to fix while silent corruption costs two <em>(0 and 4 — finding an error is half the work)</em>. Here is the machine with the hood open. Write your own message. Tune the armor. Try to kill it.</p>
+      <div class="chapter-head"><span class="no">7</span><h2><span lang="tr">İyileştirme makinesi</span><span lang="en">The healing machine</span></h2></div>
+      <p lang="tr">Artık ilk karalamadan beri makinenin her parçası senin: baytlar GF(256) üzerinde polinom değerlendirmelerine dönüşür <em>(6. bölüm)</em>, bloklar patlamalara karşı örülür <em>(5)</em>, adresi bilinen hasarı düzeltmek bir yedeğe mal olurken sessiz bozulma ikiye mal olur <em>(0 ve 4 — bir hatayı bulmak işin yarısıdır)</em>. İşte kaputu açık makine. Kendi mesajını yaz. Zırhı ayarla. Onu öldürmeyi dene.</p>
+      <p lang="en">Now you own every part of the machine from the first scribble: bytes become polynomial evaluations over GF(256) <em>(chapter 6)</em>, blocks are braided against bursts <em>(5)</em>, damage with a known address costs one spare to fix while silent corruption costs two <em>(0 and 4 — finding an error is half the work)</em>. Here is the machine with the hood open. Write your own message. Tune the armor. Try to kill it.</p>
 
       <figure class="fig" aria-label="Interactive: full Reed–Solomon playground with adjustable message, redundancy, brush, and damage mode" data-figure="finale">
         <div class="fig-body"></div>
-        <figcaption><span class="fig-no">FIG. 7</span> — The full stack, no autopilot: you pull the lever. Switch to <em>silent corruption</em> and watch the same brushwork cost exactly double — Berlekamp–Massey must deduce the damage map that scratches gave away for free.</figcaption>
+        <figcaption>
+          <span lang="tr"><span class="fig-no">ŞEK. 7</span> — Tüm yığın, otomatik pilot yok: kolu sen çekersin. <em>Sessiz bozulmaya</em> geç ve aynı fırça işinin tam iki katına mal olmasını izle — Berlekamp–Massey, çiziklerin bedavaya verdiği hasar haritasını çıkarsamak zorundadır.</span>
+          <span lang="en"><span class="fig-no">FIG. 7</span> — The full stack, no autopilot: you pull the lever. Switch to <em>silent corruption</em> and watch the same brushwork cost exactly double — Berlekamp–Massey must deduce the damage map that scratches gave away for free.</span>
+        </figcaption>
       </figure>
 
-      <p>And that is the whole secret you scratched at in chapter 0: not a backup, not a copy — a message deliberately over-determined, braided against bursts, wearing spare evaluations of itself as armor.</p>
+      <p lang="tr">Ve 0. bölümde kazıdığın sırrın tamamı bu: bir yedek değil, bir kopya değil — kasıtlı olarak fazla belirlenmiş, patlamalara karşı örülmüş, kendi yedek değerlendirmelerini zırh olarak giyen bir mesaj.</p>
+      <p lang="en">And that is the whole secret you scratched at in chapter 0: not a backup, not a copy — a message deliberately over-determined, braided against bursts, wearing spare evaluations of itself as armor.</p>
 
       <div class="map">
         <dl>
-          <div class="row"><dt>Compact discs</dt><dd>Two chained Reed–Solomon codes with cross-interleaving (CIRC) heal up to about 4,000 bad bits — roughly 2.5&nbsp;mm of gouge. The 1980 Red Book spec assumed real hands: fingerprints, scratches, children. It was right.</dd></div>
-          <div class="row"><dt>QR codes</dt><dd>Reed–Solomon at four selectable strengths — up to 30% destroyed and it still scans, which is why a QR code survives having a logo stamped over its face.</dd></div>
-          <div class="row"><dt>RAID-6</dt><dd>Two independent Reed–Solomon parity drives over GF(256): any two of your disks can die outright, and the array recomputes both from the survivors.</dd></div>
-          <div class="row"><dt>Voyager 1</dt><dd>RS(255,223) — big brother to the four RS(224,160) blocks armoring this essay’s hero — concatenated with a convolutional code, still phoning home from interstellar space after 48 years on a 23-watt radio.</dd></div>
-          <div class="row"><dt>Everything else</dt><dd>DSL, DVB, Blu-ray, DataMatrix, tape archives. ECC RAM carries Hamming’s own SECDED descendant from chapter 4. And the same idea, generalized, lives inside the LDPC and polar codes of Wi-Fi&nbsp;6, 5G, and SSDs. You have likely never gone an hour without an algebraic decoder quietly fixing the world under your fingers.</dd></div>
+          <div class="row"><dt lang="tr">Kompakt diskler</dt><dt lang="en">Compact discs</dt><dd lang="tr">Çapraz harmanlamalı (CIRC) zincirli iki Reed–Solomon kodu, yaklaşık 4.000 bozuk bite kadar — kabaca 2,5&nbsp;mm’lik oyuk — iyileştirir. 1980 Red Book şartnamesi gerçek elleri varsaydı: parmak izleri, çizikler, çocuklar. Haklıydı.</dd><dd lang="en">Two chained Reed–Solomon codes with cross-interleaving (CIRC) heal up to about 4,000 bad bits — roughly 2.5&nbsp;mm of gouge. The 1980 Red Book spec assumed real hands: fingerprints, scratches, children. It was right.</dd></div>
+          <div class="row"><dt lang="tr">QR kodları</dt><dt lang="en">QR codes</dt><dd lang="tr">Dört seçilebilir güçte Reed–Solomon — %30’a kadarı yok edilse de hâlâ okunur; bir QR kodun yüzüne logo basılmasına bu yüzden dayanır.</dd><dd lang="en">Reed–Solomon at four selectable strengths — up to 30% destroyed and it still scans, which is why a QR code survives having a logo stamped over its face.</dd></div>
+          <div class="row"><dt>RAID-6</dt><dd lang="tr">GF(256) üzerinde iki bağımsız Reed–Solomon parite diski: disklerinden herhangi ikisi tümden ölebilir ve dizi, ikisini de hayatta kalanlardan yeniden hesaplar.</dd><dd lang="en">Two independent Reed–Solomon parity drives over GF(256): any two of your disks can die outright, and the array recomputes both from the survivors.</dd></div>
+          <div class="row"><dt>Voyager 1</dt><dd lang="tr">RS(255,223) — bu denemenin ana figürünü zırhlayan dört RS(224,160) bloğunun ağabeyi — bir evrişimli kodla art arda bağlanmış, 48 yıl sonra 23 watt’lık bir telsizle yıldızlararası uzaydan hâlâ evi arıyor.</dd><dd lang="en">RS(255,223) — big brother to the four RS(224,160) blocks armoring this essay’s hero — concatenated with a convolutional code, still phoning home from interstellar space after 48 years on a 23-watt radio.</dd></div>
+          <div class="row"><dt lang="tr">Diğer her şey</dt><dt lang="en">Everything else</dt><dd lang="tr">DSL, DVB, Blu-ray, DataMatrix, bant arşivleri. ECC RAM, 4. bölümden Hamming’in kendi SECDED torununu taşır. Ve aynı fikir, genelleştirilmiş hâliyle, Wi-Fi&nbsp;6’nın, 5G’nin ve SSD’lerin LDPC ve polar kodlarının içinde yaşar. Muhtemelen, cebirsel bir çözücünün parmaklarının altında dünyayı sessizce onarmadığı tek bir saat bile geçirmedin.</dd><dd lang="en">DSL, DVB, Blu-ray, DataMatrix, tape archives. ECC RAM carries Hamming’s own SECDED descendant from chapter 4. And the same idea, generalized, lives inside the LDPC and polar codes of Wi-Fi&nbsp;6, 5G, and SSDs. You have likely never gone an hour without an algebraic decoder quietly fixing the world under your fingers.</dd></div>
         </dl>
       </div>
     </section>
 
     <section class="chapter" id="colophon-notes">
-      <div class="chapter-head"><span class="no">&amp;</span><h2>Notes &amp; further reading</h2></div>
-      <p class="aside">R. W. Hamming, <em>Error Detecting and Error Correcting Codes</em> (1950) · I. S. Reed &amp; G. Solomon, <em>Polynomial Codes over Certain Finite Fields</em> (1960) · E. R. Berlekamp, <em>Algebraic Coding Theory</em> (1968) · J. L. Massey, <em>Shift-Register Synthesis and BCH Decoding</em> (1969). The decoder in this page implements syndromes → Forney syndromes → Berlekamp–Massey → Chien search → Forney’s algorithm, in about three hundred readable lines — <a href="https://github.com/cleoanka/unscratchable">read the source</a>; it is tested by thousands of random corruptions on every commit. For video, 3Blue1Brown’s Hamming pair is superb. For going deeper, the Wikiversity “Reed–Solomon codes for coders” guide is the classic on-ramp.</p>
+      <div class="chapter-head"><span class="no">&amp;</span><h2><span lang="tr">Notlar ve ileri okuma</span><span lang="en">Notes &amp; further reading</span></h2></div>
+      <p class="aside" lang="tr">R. W. Hamming, <em>Error Detecting and Error Correcting Codes</em> (1950) · I. S. Reed &amp; G. Solomon, <em>Polynomial Codes over Certain Finite Fields</em> (1960) · E. R. Berlekamp, <em>Algebraic Coding Theory</em> (1968) · J. L. Massey, <em>Shift-Register Synthesis and BCH Decoding</em> (1969). Bu sayfadaki çözücü, yaklaşık üç yüz okunabilir satırda sendromlar → Forney sendromları → Berlekamp–Massey → Chien araması → Forney algoritması adımlarını uygular — <a href="https://github.com/cleoanka/unscratchable">kaynağı oku</a>; her commit’te binlerce rastgele bozulmayla sınanır. Video için 3Blue1Brown’ın Hamming ikilisi harikadır. Daha derine inmek için Wikiversity’nin “Reed–Solomon codes for coders” rehberi klasik giriş rampasıdır.</p>
+      <p class="aside" lang="en">R. W. Hamming, <em>Error Detecting and Error Correcting Codes</em> (1950) · I. S. Reed &amp; G. Solomon, <em>Polynomial Codes over Certain Finite Fields</em> (1960) · E. R. Berlekamp, <em>Algebraic Coding Theory</em> (1968) · J. L. Massey, <em>Shift-Register Synthesis and BCH Decoding</em> (1969). The decoder in this page implements syndromes → Forney syndromes → Berlekamp–Massey → Chien search → Forney’s algorithm, in about three hundred readable lines — <a href="https://github.com/cleoanka/unscratchable">read the source</a>; it is tested by thousands of random corruptions on every commit. For video, 3Blue1Brown’s Hamming pair is superb. For going deeper, the Wikiversity “Reed–Solomon codes for coders” guide is the classic on-ramp.</p>
     </section>
 
   </div>
 </main>
 
 <footer class="colophon">
-  <p>unscratchable · an interactive essay built with canvas, zero dependencies, and affection for finite fields<br>
+  <p lang="tr">unscratchable · canvas, sıfır bağımlılık ve sonlu cisimlere sevgiyle yapılmış etkileşimli bir deneme<br>
+  MIT lisanslı · <a href="https://github.com/cleoanka/unscratchable">github.com/cleoanka/unscratchable</a> · her figür dürüsttür: ekrandaki matematik kaynaktaki matematiktir</p>
+  <p lang="en">unscratchable · an interactive essay built with canvas, zero dependencies, and affection for finite fields<br>
   MIT licensed · <a href="https://github.com/cleoanka/unscratchable">github.com/cleoanka/unscratchable</a> · every figure is honest: the math on screen is the math in the source</p>
 </footer>
 
-<noscript><p class="fig-note" style="text-align:center">The figures need JavaScript — the essay is interactive all the way down.</p></noscript>
+<noscript>
+  <p class="fig-note" style="text-align:center" lang="tr">Figürler JavaScript gerektirir — deneme en altına kadar etkileşimlidir.</p>
+  <p class="fig-note" style="text-align:center" lang="en">The figures need JavaScript — the essay is interactive all the way down.</p>
+</noscript>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>

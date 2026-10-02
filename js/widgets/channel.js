@@ -2,7 +2,7 @@
 // channel; every bit survives only with probability 1−p. Click any bit to
 // flip it yourself, or let the channel keep rolling.
 
-import { Figure, C, mono, fade, uiBar, slider, button, note, spacer, reducedMotion } from './figure.js';
+import { Figure, C, mono, fade, uiBar, slider, button, note, spacer, reducedMotion, t } from './figure.js';
 import { mulberry32 } from '../prng.js';
 
 const WORD = 'HELLO';
@@ -22,11 +22,11 @@ export class Channel extends Figure {
     this.stat = note(bar, '');
     spacer(bar);
     slider(bar, {
-      label: 'noise', min: 0, max: 20, step: 0.5, value: 4,
+      label: t('noise'), min: 0, max: 20, step: 0.5, value: 4,
       format: (v) => `${v}%`,
       onInput: (v) => { this.p = v / 100; this.roll(); },
     });
-    button(bar, 'send again', () => this.roll());
+    button(bar, t('sendAgain'), () => this.roll());
     this.roll();
   }
 
@@ -44,7 +44,7 @@ export class Channel extends Figure {
     const intact = Math.pow(1 - this.p, this.nBits);
     const hits = this.flips.filter(Boolean).length;
     this.stat.set(
-      `${hits} of ${this.nBits} bits flipped · a clean arrival has probability (1−p)^${this.nBits} ≈ ${(intact * 100).toFixed(intact > 0.1 ? 0 : 1)}%`,
+      t('c_stat', hits, this.nBits, (intact * 100).toFixed(intact > 0.1 ? 0 : 1)),
       hits === 0 ? 'heal' : '',
     );
   }
@@ -85,11 +85,11 @@ export class Channel extends Figure {
     ctx.textAlign = 'left';
     ctx.font = mono(10);
     ctx.fillStyle = C.faint;
-    ctx.fillText('SENT', L.x0, 24);
-    ctx.fillText('RECEIVED', L.x0, h - 34);
+    ctx.fillText(t('c_sent'), L.x0, 24);
+    ctx.fillText(t('c_recv'), L.x0, h - 34);
     // noise field density hint
     ctx.textAlign = 'right';
-    ctx.fillText(`p = ${(this.p * 100).toFixed(1)}% PER BIT`, L.x0 + L.cw * this.bytes.length, 24);
+    ctx.fillText(t('c_perbit', (this.p * 100).toFixed(1)), L.x0 + L.cw * this.bytes.length, 24);
 
     for (let c = 0; c < this.bytes.length; c++) {
       const cx = L.x0 + c * L.cw + L.cw / 2;

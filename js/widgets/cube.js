@@ -3,7 +3,7 @@
 // within distance 1 of exactly one codeword: two decoding spheres tile the
 // whole space. Drag to rotate; click a corner to watch it decode.
 
-import { Figure, C, mono, fade, uiBar, button, note, spacer, reducedMotion } from './figure.js';
+import { Figure, C, mono, fade, uiBar, button, note, spacer, reducedMotion, t } from './figure.js';
 
 const CODEWORDS = [0b000, 0b111];
 
@@ -19,7 +19,7 @@ export class Cube extends Figure {
 
     // keyboard path: arrows rotate, Enter cycles through the corners
     this.canvas.tabIndex = 0;
-    this.canvas.setAttribute('aria-label', 'cube of 3-bit strings — arrow keys rotate, Enter steps through corners');
+    this.canvas.setAttribute('aria-label', t('cube_aria'));
     this.canvas.addEventListener('keydown', (e) => {
       const step = 0.15;
       if (e.key === 'ArrowLeft') this.yaw -= step;
@@ -33,11 +33,11 @@ export class Cube extends Figure {
     });
 
     const bar = uiBar(mount);
-    this.info = note(bar, 'click any corner to decode it', { live: true });
+    this.info = note(bar, t('cube_click'), { live: true });
     spacer(bar);
-    this.sphereBtn = button(bar, 'show decoding spheres', () => {
+    this.sphereBtn = button(bar, t('cube_showSpheres'), () => {
       this.spheres = !this.spheres;
-      this.sphereBtn.textContent = this.spheres ? 'hide decoding spheres' : 'show decoding spheres';
+      this.sphereBtn.textContent = this.spheres ? t('cube_hideSpheres') : t('cube_showSpheres');
     });
   }
 
@@ -73,15 +73,15 @@ export class Cube extends Figure {
   selectCorner(v) {
     this.selected = v;
     if (v === null) {
-      this.info.set('click any corner to decode it');
+      this.info.set(t('cube_click'));
       return;
     }
     const c = this.nearest(v);
     const d = Cube.dist(v, c);
     this.info.set(
       d === 0
-        ? `${bits(v)} is a codeword — it decodes as itself`
-        : `d(${bits(v)}, ${bits(c)}) = ${d} → decodes to ${bits(c)}`,
+        ? t('cube_isCodeword', bits(v))
+        : t('cube_decodesTo', bits(v), bits(c), d),
       d === 0 ? 'heal' : '',
     );
   }
@@ -152,7 +152,7 @@ export class Cube extends Figure {
       ctx.beginPath();
       ctx.moveTo(pts[a].x, pts[a].y);
       ctx.lineTo(pts[b].x, pts[b].y);
-      ctx.strokeStyle = fade('#8a8371', 0.16 + 0.12 * ((pts[a].f + pts[b].f) / 2 - 0.8) * 5);
+      ctx.strokeStyle = fade(C.faint, 0.16 + 0.12 * ((pts[a].f + pts[b].f) / 2 - 0.8) * 5);
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -215,7 +215,7 @@ export class Cube extends Figure {
     ctx.font = mono(10);
     ctx.textAlign = 'left';
     ctx.fillStyle = C.faint;
-    ctx.fillText('CODE {000, 111} · EDGES = SINGLE BIT FLIPS · DRAG TO ROTATE', 16, 20);
+    ctx.fillText(t('cube_legend'), 16, 20);
   }
 }
 
