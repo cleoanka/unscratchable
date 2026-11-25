@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   after dragging a message point.
 - The `?demo=1` hero loop stops when the figure is torn down.
 - Venn repair message says "more than one hit" instead of "two hits".
+- Figure and theme-button screen-reader labels follow the language toggle
+  (Turkish labels in TR mode instead of English text read with Turkish rules).
 
 ## [1.0.0] — 2026-07-07
 
