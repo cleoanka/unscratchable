@@ -109,7 +109,7 @@ test('corrects every legal mix: 2·errors + erasures ≤ nsym', () => {
   }
 });
 
-test('never returns ok with wrong data; overload is reported as failure', () => {
+test('overload is flagged in the vast majority; any ok result is a different valid codeword', () => {
   const rng = mulberry32(6);
   const nsym = 16;
   const rs = new RS(nsym);
