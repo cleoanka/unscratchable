@@ -35,7 +35,8 @@ Hero (ch. 0) and Hamming Venn (ch. 4) get the deepest polish; they are the GIFs.
 - `js/gf256.js` — GF(2⁸), poly 0x11D (the QR/AES-agnostic classic), log/antilog tables,
   add/mul/div/pow/inv, polynomial ops (eval via Horner, mul, scale).
 - `js/rs.js` — systematic Reed–Solomon encode (generator-poly division), decode via
-  syndromes → Berlekamp–Massey (with erasure initialization) → Chien search → Forney.
+  syndromes → Forney syndromes (known erasures folded out) → Berlekamp–Massey →
+  Chien search → Forney.
   Supports **errors and erasures**: 2·errors + erasures ≤ n − k. The hero uses erasure
   decoding (brush position = known locations), honest to how CDs actually work.
 - `js/hamming.js` — Hamming(7,4) encode/decode, syndrome table.
@@ -57,10 +58,12 @@ Each chapter widget subclasses it. No global state; each figure is self-containe
 
 ## Visual identity
 
-Archival-specimen dark: warm near-black ink `#100f0d`, off-white serif text (Iowan Old
-Style / Palatino / Charter / Georgia stack — no webfont payload), monospace for data
-(SF Mono / Cascadia / consolas stack). Two working colors only: **damage rust**
-`#e0533d` and **heal green** `#3ddc84`, with a quiet gold `#c8a24b` for annotations.
+Dark house style on a cool near-black ink `#0f1115` (matching cleoanka.com), off-white
+serif text (Iowan Old Style / Palatino / Charter / Georgia stack — no webfont payload),
+monospace for data (SF Mono / Cascadia / consolas stack). Two working colors only:
+**damage rust** `#fb7185` and **heal green** `#34d399`, with a quiet gold `#d4af37` for
+annotations. A paper-light theme (`#fcfcfc`) follows the device setting or a toggle;
+canvas figures read one shared palette (`js/widgets/figure.js`), swapped in place.
 Figures sit on slightly-raised panels with hairline borders. Generous measure (~65ch),
 big chapter numerals, footnote-style asides. No icon fonts, no CSS framework, no build.
 
@@ -78,5 +81,6 @@ big chapter numerals, footnote-style asides. No icon fonts, no CSS framework, no
 
 ## Explicit non-goals
 
-No CRC/LDPC/turbo/polar codes, no QR generation, no WASM, no service worker, no i18n.
+No CRC/LDPC/turbo/polar codes, no QR generation, no WASM, no service worker. Languages
+stop at the two the page ships (English, Turkish), toggled client-side.
 One idea, executed deeply.
