@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { shield, unshield } from '../js/codec.js';
-import { blocksDiffering } from '../js/widgets/surface.js';
+import { blocksDiffering, healTargets } from '../js/widgets/surface.js';
 import { mulberry32, randInt, sampleDistinct } from '../js/prng.js';
 
 function randBytes(rng, len) {
@@ -19,13 +19,14 @@ function findMixedOutcome() {
   assert.equal(B, 2);
   for (let trial = 0; trial < 4000; trial++) {
     const stored = Uint8Array.from(clean);
-    for (const p of sampleDistinct(rng, clean.length, 12)) stored[p] ^= 1 + randInt(rng, 255);
+    const damaged = sampleDistinct(rng, clean.length, 12);
+    for (const p of damaged) stored[p] ^= 1 + randInt(rng, 255);
     const res = unshield(stored, meta);
     if (res.ok) continue;
     const healed = shield(res.data, { nsym: 8 }).payload;
     const failed = new Set(res.perBlock.map((b, i) => (b.ok ? -1 : i)).filter((i) => i >= 0));
     const lying = [...blocksDiffering(healed, clean, B)].filter((b) => !failed.has(b));
-    if (lying.length > 0) return { clean, meta, stored, res, healed, failed, lying };
+    if (lying.length > 0) return { clean, meta, stored, damaged, res, healed, failed, lying };
   }
   return null;
 }
@@ -51,4 +52,20 @@ test('a miscorrected block is caught even when another block fails', () => {
   let differs = false;
   for (let p = b; p < clean.length; p += meta.blockCount) if (healed[p] !== clean[p]) differs = true;
   assert.ok(differs, 'the ok block really carries wrong bytes');
+});
+
+test('healTargets: after a heal the canvas holds the decoder output, wreckage aside', () => {
+  const { meta, stored, damaged, healed, failed, lying } = findMixedOutcome();
+  const B = meta.blockCount;
+  const targets = healTargets(stored, healed, damaged, failed, B);
+  // the miscorrection moved bytes the brush never touched
+  const erased = new Set(damaged);
+  assert.ok(targets.some((p) => !erased.has(p) && p % B === lying[0]));
+  // replay surface.js advance(): failed blocks keep their wreckage
+  const shown = Uint8Array.from(stored);
+  for (const p of targets) if (!failed.has(p % B)) shown[p] = healed[p];
+  for (let p = 0; p < shown.length; p++) {
+    const want = failed.has(p % B) ? stored[p] : healed[p];
+    if (shown[p] !== want) throw new Error(`byte ${p} is neither decoder output nor wreckage`);
+  }
 });

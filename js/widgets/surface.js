@@ -17,6 +17,18 @@ export function blocksDiffering(a, b, blockCount) {
   return out;
 }
 
+// Payload bytes a heal must rewrite so the canvas shows the decoder's output:
+// everything the brush touched, plus every byte the decoder changed beyond
+// it — a miscorrection moves bytes the brush never reached. Failed blocks are
+// skipped; their wreckage stays as it is.
+export function healTargets(stored, healed, erased, failedBlocks, blockCount) {
+  const out = new Set(erased);
+  for (let p = 0; p < healed.length; p++) {
+    if (healed[p] !== stored[p] && !failedBlocks.has(p % blockCount)) out.add(p);
+  }
+  return [...out];
+}
+
 export class StorageSurface extends Figure {
   constructor(mount, {
     cols = 128, rows = 40, nsym = 64, message = 'UNSCRATCHABLE',
@@ -152,7 +164,8 @@ export class StorageSurface extends Figure {
       .some((b) => !this.failedBlocks.has(b));
 
     const L = this.layout(this.w, this.h);
-    const order = [...this.erased].sort((a, b) => this.#byteX(a, L) - this.#byteX(b, L));
+    const order = healTargets(this.stored, healed, this.erased, this.failedBlocks, B)
+      .sort((a, b) => this.#byteX(a, L) - this.#byteX(b, L));
     this.healing = { start: this.t, order, healed, ok: res.ok, done: 0, doneSet: new Set() };
   }
 
