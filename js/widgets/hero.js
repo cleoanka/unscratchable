@@ -54,8 +54,10 @@ export class Hero extends StorageSurface {
   }
 
   async #runDemo() {
-    const sleep = (s) => new Promise((r) => setTimeout(r, s * 1000));
-    await sleep(1.4);
+    // resolves false once the figure is destroyed (language switch), so the
+    // loop stops instead of scratching a detached canvas forever
+    const sleep = (s) => new Promise((r) => setTimeout(() => r(!this.destroyed), s * 1000));
+    if (!await sleep(1.4)) return;
     for (;;) {
       const L = this.layout(this.w, this.h);
       const y0 = L.gy + this.rows * L.cs * 0.5;
@@ -66,13 +68,13 @@ export class Hero extends StorageSurface {
         const x = L.gx + L.gw * (0.05 + 0.9 * u);
         const y = y0 + Math.sin(u * Math.PI * 5.2) * amp * (0.5 + 0.5 * Math.sin(u * Math.PI));
         this.scratch(x, y);
-        await sleep(0.016);
+        if (!await sleep(0.016)) return;
       }
-      await sleep(0.9);
+      if (!await sleep(0.9)) return;
       this.heal();
-      await sleep(3.4);
+      if (!await sleep(3.4)) return;
       this.reset();
-      await sleep(1.8);
+      if (!await sleep(1.8)) return;
     }
   }
 }
