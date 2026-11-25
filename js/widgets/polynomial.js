@@ -11,11 +11,40 @@ import { mulberry32 } from '../prng.js';
 const XS = [1, 2, 3, 4, 5, 6, 7];
 const K = 3;
 
+// the parabola through (1, ys[0]), (2, ys[1]), (3, ys[2]) — Lagrange — at x
+export function parabola(x, ys) {
+  const xs = [1, 2, 3];
+  let y = 0;
+  for (let i = 0; i < 3; i++) {
+    let L = 1;
+    for (let j = 0; j < 3; j++) {
+      if (j !== i) L *= (x - xs[j]) / (xs[i] - xs[j]);
+    }
+    y += ys[i] * L;
+  }
+  return y;
+}
+
+// Vertical extent of the plot: the usual [-2, 10], widened just enough to
+// keep every transmitted sample on canvas. Spares far from the message swing
+// hard (y(7) = 10·y1 − 24·y2 + 15·y3), and an off-canvas spare could not be
+// clicked.
+export function yRange(ys) {
+  let lo = -2, hi = 10;
+  for (const x of XS) {
+    const y = parabola(x, ys);
+    lo = Math.min(lo, y - 0.5);
+    hi = Math.max(hi, y + 0.5);
+  }
+  return [lo, hi];
+}
+
 export class Polynomial extends Figure {
   constructor(mount) {
     super(mount, { aspect: 0.55, minH: 320, maxH: 430 });
     // the message: y-values at x = 1, 2, 3 — chosen so the whole parabola,
-    // including the spare samples out to x = 7, stays comfortably on screen
+    // including the spare samples out to x = 7, sits in the usual [-2, 10]
+    // view (drags may widen it: see yRange)
     this.msgY = [3, 4.5, 5.5];
     this.dead = new Set();
     this.dragIdx = -1;
@@ -40,16 +69,7 @@ export class Polynomial extends Figure {
 
   // polynomial through the three message points (Lagrange), evaluated at x
   #curve(x, ys = this.msgY) {
-    const xs = [1, 2, 3];
-    let y = 0;
-    for (let i = 0; i < 3; i++) {
-      let L = 1;
-      for (let j = 0; j < 3; j++) {
-        if (j !== i) L *= (x - xs[j]) / (xs[i] - xs[j]);
-      }
-      y += ys[i] * L;
-    }
-    return y;
+    return parabola(x, ys);
   }
 
   // rebuild from the first three surviving transmitted points
@@ -99,12 +119,15 @@ export class Polynomial extends Figure {
   }
 
   // ---------- mapping ----------
+  // the y range is frozen while a drag is under way: refitting it under the
+  // cursor would feed back into the dragged value and run away
   #map(w, h) {
+    const [lo, hi] = this.dragRange ?? yRange(this.msgY);
     const x0 = 54, x1 = w - 24, y0 = h - 46, y1 = 26;
     const X = (x) => x0 + ((x - 0) / 8) * (x1 - x0);
-    const Y = (y) => y0 - ((y + 2) / 12) * (y0 - y1);
-    const Yinv = (py) => ((y0 - py) / (y0 - y1)) * 12 - 2;
-    return { X, Y, Yinv, x0, x1, y0, y1 };
+    const Y = (y) => y0 - ((y - lo) / (hi - lo)) * (y0 - y1);
+    const Yinv = (py) => ((y0 - py) / (y0 - y1)) * (hi - lo) + lo;
+    return { X, Y, Yinv, x0, x1, y0, y1, lo, hi };
   }
 
   onDown(x, y) {
@@ -117,6 +140,7 @@ export class Polynomial extends Figure {
       const px = M.X(i + 1), py = M.Y(this.msgY[i]);
       if ((px - x) ** 2 + (py - y) ** 2 < 14 ** 2 && !this.dead.has(i + 1)) {
         this.dragIdx = i;
+        this.dragRange = [M.lo, M.hi];
         return;
       }
     }
@@ -148,6 +172,7 @@ export class Polynomial extends Figure {
       this.#report();
     }
     this.dragIdx = -1;
+    this.dragRange = null; // refit: every spare back on canvas, clickable
   }
 
   draw(ctx, w, h) {
@@ -159,7 +184,10 @@ export class Polynomial extends Figure {
     ctx.strokeStyle = fade(C.faint, 0.12);
     ctx.beginPath();
     for (let gx = 0; gx <= 8; gx++) { ctx.moveTo(M.X(gx), M.y1); ctx.lineTo(M.X(gx), M.y0); }
-    for (let gy = -2; gy <= 10; gy += 2) { ctx.moveTo(M.x0, M.Y(gy)); ctx.lineTo(M.x1, M.Y(gy)); }
+    const gstep = 2 * Math.ceil((M.hi - M.lo) / 24); // 2 in the usual [-2, 10]
+    for (let gy = Math.ceil(M.lo / gstep) * gstep; gy <= M.hi; gy += gstep) {
+      ctx.moveTo(M.x0, M.Y(gy)); ctx.lineTo(M.x1, M.Y(gy));
+    }
     ctx.stroke();
     ctx.strokeStyle = fade(C.faint, 0.35);
     ctx.beginPath();
