@@ -8,7 +8,9 @@
 //   · block b, symbol j is transmitted at payload[j·B + b], so damage that
 //     is local in PAYLOAD space spreads across blocks too.
 // A contiguous payload burst of length L touches at most ⌈L/B⌉ symbols of
-// any single block — so ANY burst up to nsym·B bytes heals completely.
+// any single block — so ANY burst up to nsym·B bytes heals completely when
+// its location is known (erasures). Unknown damage (errors) costs twice the
+// parity per byte: the guarantee drops to ⌊nsym/2⌋·B.
 
 import { RS } from './rs.js';
 
@@ -44,7 +46,8 @@ export function shield(data, { nsym = 32 } = {}) {
       blockDataLen,
       blockLen: n,
       dataLen: bytes.length,
-      // any contiguous scratch up to this long is guaranteed healable
+      // any contiguous scratch up to this long is guaranteed healable as
+      // known erasures; as unknown errors, only half of it (⌊nsym/2⌋·B)
       burstCapacity: nsym * blockCount,
     },
   };
