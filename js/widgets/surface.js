@@ -9,10 +9,12 @@ import { Figure, C, mono, fade, textBitmap, reducedMotion, t } from './figure.js
 import { shield, unshield } from '../codec.js';
 import { mulberry32 } from '../prng.js';
 
-function bytesEqual(a, b) {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-  return true;
+// Blocks in which payloads `a` and `b` disagree (payload byte p belongs to
+// block p mod B, data and parity alike).
+export function blocksDiffering(a, b, blockCount) {
+  const out = new Set();
+  for (let p = 0; p < a.length; p++) if (a[p] !== b[p]) out.add(p % blockCount);
+  return out;
 }
 
 export class StorageSurface extends Figure {
@@ -142,8 +144,12 @@ export class StorageSurface extends Figure {
     // from the kept original. The original exists only to catch the decoder
     // lying (a beyond-budget miscorrection onto a different valid codeword)
     // and to serve the reset button.
+    // Checked per block: one block can miscorrect while another fails, and
+    // the failure must not hide the lie.
     const healed = shield(res.data, { nsym: this.nsym }).payload;
-    this.miscorrected = res.ok && !bytesEqual(healed, this.clean);
+    const B = this.meta.blockCount;
+    this.miscorrected = [...blocksDiffering(healed, this.clean, B)]
+      .some((b) => !this.failedBlocks.has(b));
 
     const L = this.layout(this.w, this.h);
     const order = [...this.erased].sort((a, b) => this.#byteX(a, L) - this.#byteX(b, L));
