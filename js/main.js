@@ -84,6 +84,15 @@ function paintLangBtn() {
   langBtn.textContent = next.toUpperCase();
   langBtn.setAttribute('aria-label', next === 'tr' ? 'Türkçe sürüm' : 'English version');
 }
+// screen-reader labels follow the language too: the markup carries English in
+// aria-label and Turkish in data-aria-tr; the English is kept on first swap
+function paintAria() {
+  for (const el of document.querySelectorAll('[data-aria-tr]')) {
+    el.dataset.ariaEn ??= el.getAttribute('aria-label');
+    el.setAttribute('aria-label', getLang() === 'tr' ? el.dataset.ariaTr : el.dataset.ariaEn);
+  }
+}
+paintAria();
 paintLangBtn();
 if (langBtn) {
   langBtn.addEventListener('click', () => {
@@ -93,6 +102,7 @@ if (langBtn) {
     document.documentElement.setAttribute('data-lang', next);
     document.documentElement.lang = next;
     paintLangBtn();
+    paintAria();
     buildFigures();
   });
 }
